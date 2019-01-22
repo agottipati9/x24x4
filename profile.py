@@ -129,7 +129,7 @@ pc.verifyParameters()
 #
 request = pc.makeRequestRSpec()
 epclink = request.Link("s1-lan")
-epclink2= request.link("s1-lan2")
+epclink2= request.Link("s1-lan2")
 
 # Checking for oaisim
 
