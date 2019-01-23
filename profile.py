@@ -179,9 +179,9 @@ else:
     #rue1_enb2_rf = rue1.addInterface("enb2_rf")
 
     # Create the RF link between the Nexus 5 UE and eNodeB
-    #rflink2 = request.RFLink("rflink2")
-    #rflink2.addInterface(enb2_rue1_rf)
-    #rflink2.addInterface(rue1_enb2_rf)
+    rflink2 = request.RFLink("rflink2")
+    rflink2.addInterface(enb2_rue1_rf)
+    rflink2.addInterface(rue1_enb2_rf)
 
     rflink1 = request.RFLink("rflink1")
     rflink1.addInterface(enb1_rue1_rf)
