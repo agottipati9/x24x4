@@ -176,7 +176,7 @@ else:
     rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
     rue1.adb_target = "adb-tgt"
     rue1_enb1_rf = rue1.addInterface("enb1_rf")
-    #rue1_enb2_rf = rue1.addInterface("enb2_rf")
+    rue1_enb2_rf = rue1.addInterface("enb2_rf")
 
     # Create the RF link between the Nexus 5 UE and eNodeB
     rflink2 = request.RFLink("rflink2")
