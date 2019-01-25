@@ -128,8 +128,8 @@ pc.verifyParameters()
 # to request in our experiment, and their configuration.
 #
 request = pc.makeRequestRSpec()
-epclink = request.Link("s1-lan")
-epclink2= request.Link("s1-lan2")
+hackLan = request.Link("s1-lan")
+#epclink2= request.Link("s1-lan2")
 
 # Checking for oaisim
 
@@ -155,6 +155,8 @@ else:
     connectOAI_DS(enb1, 0)
     enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     enb1_rue1_rf = enb1.addInterface("rue1_rf")
+    enb1_s1_if = node.addInterface("enb1_s1if)
+
 
     # Add another NUC eNB node.
     enb2 = request.RawPC("enb2")
@@ -166,6 +168,8 @@ else:
     connectOAI_DS(enb2, 0)
     enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     enb2_rue1_rf = enb2.addInterface("rue1_rf")
+    enb2_s1_if = node.addInterface("enb2_s1if)
+
 
     # Add an OTS (Nexus 5) UE
     rue1 = request.UE("rue1")
@@ -189,8 +193,11 @@ else:
     
     
     # Add a link connecting the NUC eNB and the OAI EPC node.
-    epclink.addNode(enb1)
-    epclink2.addNode(enb2)
+    #epclink].addNode(enb1)
+    #epclink2.addNode(enb2)
+    hacklan.addInterface(enb1_s1_if)
+    hacklan.addInterface(enb2_s1_if)
+
 
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
@@ -198,15 +205,15 @@ epc.disk_image = GLOBALS.OAI_EPC_IMG
 epc.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r EPC"))
 connectOAI_DS(epc, 0)
  
-epclink.addNode(epc)
-epclink.link_multiplexing = True
-epclink.vlan_tagging = True
-epclink.best_effort = True
+#epclink.addNode(epc)
+#epclink.link_multiplexing = True
+#epclink.vlan_tagging = True
+#epclink.best_effort = True
 
-epclink2.addNode(epc)
-epclink2.link_multiplexing = True
-epclink2.vlan_tagging = True
-epclink2.best_effort = True
+#epclink2.addNode(epc)
+hacklan.link_multiplexing = True
+hacklan.vlan_tagging = True
+hacklan.best_effort = True
 
 tour = IG.Tour()
 tour.Description(IG.Tour.MARKDOWN, tourDescription)
