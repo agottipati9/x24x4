@@ -155,7 +155,7 @@ else:
     connectOAI_DS(enb1, 0)
     enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     enb1_rue1_rf = enb1.addInterface("rue1_rf")
-    enb1_s1_if = node.addInterface("enb1_s1if)
+    enb1_s1_if = node.addInterface("enb1_s1if")
 
 
     # Add another NUC eNB node.
@@ -168,7 +168,7 @@ else:
     connectOAI_DS(enb2, 0)
     enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     enb2_rue1_rf = enb2.addInterface("rue1_rf")
-    enb2_s1_if = node.addInterface("enb2_s1if)
+    enb2_s1_if = node.addInterface("enb2_s1if")
 
 
     # Add an OTS (Nexus 5) UE
