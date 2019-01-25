@@ -128,7 +128,7 @@ pc.verifyParameters()
 # to request in our experiment, and their configuration.
 #
 request = pc.makeRequestRSpec()
-hackLan = request.Link("s1-lan")
+hacklan = request.Link("s1-lan")
 #epclink2= request.Link("s1-lan2")
 
 # Checking for oaisim
