@@ -204,6 +204,7 @@ epc = request.RawPC("epc")
 epc.disk_image = GLOBALS.OAI_EPC_IMG
 epc.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r EPC"))
 connectOAI_DS(epc, 0)
+epc_s1_if = epc.addInterface("epc_s1if")
  
 #epclink.addNode(epc)
 #epclink.link_multiplexing = True
@@ -211,6 +212,7 @@ connectOAI_DS(epc, 0)
 #epclink.best_effort = True
 
 #epclink2.addNode(epc)
+hacklan.addInterface(epc_s1_if)
 hacklan.link_multiplexing = True
 hacklan.vlan_tagging = True
 hacklan.best_effort = True
