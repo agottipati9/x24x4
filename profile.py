@@ -172,7 +172,8 @@ else:
 
 
     # Add an OTS (Nexus 5) UE
-    rue1 = request.UE("rue1",component_id='ue6')
+    #rue1 = request.UE("rue1",component_id='ue6')
+    rue1 = request.UE("rue1")
     if params.FIXED_UE:
         rue1.component_id = params.FIXED_UE
     rue1.hardware_type = GLOBALS.UE_HWTYPE
