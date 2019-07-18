@@ -260,7 +260,7 @@ else:
     
     #ue2---------------------------------------------------
     enb1_rue2_rf = enb1.addInterface("rue2_rf")
-    rue2_enb1_rf = rue1.addInterface("enb1_rf")
+    rue2_enb1_rf = rue2.addInterface("enb1_rf")
     rflink12 = request.RFLink("rflink12")
     rflink12.addInterface(enb1_rue2_rf)
     rflink12.addInterface(rue2_enb1_rf)
