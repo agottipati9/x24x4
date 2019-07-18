@@ -154,7 +154,7 @@ else:
     enb1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
     connectOAI_DS(enb1, 0)
     enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
-    enb1_rue1_rf = enb1.addInterface("rue1_rf")
+    #enb1_rue1_rf = enb1.addInterface("rue1_rf")
     enb1_s1_if = enb1.addInterface("enb1_s1if")
 
 
@@ -167,9 +167,32 @@ else:
     enb2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
     connectOAI_DS(enb2, 0)
     enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
-    enb2_rue1_rf = enb2.addInterface("rue1_rf")
+    #enb2_rue1_rf = enb2.addInterface("rue1_rf")
     enb2_s1_if = enb2.addInterface("enb2_s1if")
 
+    enb3 = request.RawPC("enb3")
+    if params.FIXED_ENB:
+        enb3.component_id = params.FIXED_ENB
+    enb3.hardware_type = GLOBALS.NUC_HWTYPE
+    enb3.disk_image = GLOBALS.OAI_ENB_IMG
+    enb3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    connectOAI_DS(enb3, 0)
+    enb3.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+    #enb3_rue1_rf = enb1.addInterface("rue1_rf")
+    enb3_s1_if = enb3.addInterface("enb3_s1if")
+
+
+    # Add another NUC eNB node.
+    enb4 = request.RawPC("enb4")
+    if params.FIXED_ENB:
+        enb4.component_id = params.FIXED_ENB
+    enb4.hardware_type = GLOBALS.NUC_HWTYPE
+    enb4.disk_image = GLOBALS.OAI_ENB_IMG
+    enb4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    connectOAI_DS(enb2, 0)
+    enb4.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+    #enb4_rue1_rf = enb2.addInterface("rue1_rf")
+    enb4_s1_if = enb4.addInterface("enb4_s1if")
 
     # Add an OTS (Nexus 5) UE
     #rue1 = request.UE("rue1",component_id='ue6')
@@ -180,25 +203,151 @@ else:
     rue1.disk_image = GLOBALS.UE_IMG
     rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
     rue1.adb_target = "adb-tgt"
-    rue1_enb1_rf = rue1.addInterface("enb1_rf")
-    rue1_enb2_rf = rue1.addInterface("enb2_rf")
+    #rue1_enb1_rf = rue1.addInterface("enb1_rf")
+    #rue1_enb2_rf = rue1.addInterface("enb2_rf")
 
+    rue1 = request.UE("rue1")
+    if params.FIXED_UE:
+        rue1.component_id = params.FIXED_UE
+    rue1.hardware_type = GLOBALS.UE_HWTYPE
+    rue1.disk_image = GLOBALS.UE_IMG
+    rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    rue1.adb_target = "adb-tgt" 	
+	
+    rue2 = request.UE("rue2")
+    if params.FIXED_UE:
+        rue1.component_id = params.FIXED_UE
+    rue2.hardware_type = GLOBALS.UE_HWTYPE
+    rue2.disk_image = GLOBALS.UE_IMG
+    rue2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    rue2.adb_target = "adb-tgt" 
+	
+    rue3 = request.UE("rue3")
+    if params.FIXED_UE:
+        rue1.component_id = params.FIXED_UE
+    rue3.hardware_type = GLOBALS.UE_HWTYPE
+    rue3.disk_image = GLOBALS.UE_IMG
+    rue3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    rue3.adb_target = "adb-tgt" 
+
+    rue4 = request.UE("rue4")
+    if params.FIXED_UE:
+        rue1.component_id = params.FIXED_UE
+    rue4.hardware_type = GLOBALS.UE_HWTYPE
+    rue4.disk_image = GLOBALS.UE_IMG
+    rue4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+    rue4.adb_target = "adb-tgt" 	
+	
+	
+	
     # Create the RF link between the Nexus 5 UE and eNodeB
-    rflink2 = request.RFLink("rflink2")
-    rflink2.addInterface(enb2_rue1_rf)
-    rflink2.addInterface(rue1_enb2_rf)
+    #ue1---------------------------------------------------
+    enb1_rue1_rf = enb1.addInterface("rue1_rf")
+    rue1_enb1_rf = rue1.addInterface("enb1_rf")
+    rflink11 = request.RFLink("rflink11")
+    rflink11.addInterface(enb1_rue1_rf)
+    rflink11.addInterface(rue1_enb1_rf)
+	
+    enb2_rue1_rf = enb2.addInterface("rue1_rf")
+    rue1_enb2_rf = rue1.addInterface("enb2_rf")
+    rflink21 = request.RFLink("rflink21")
+    rflink21.addInterface(enb2_rue1_rf)
+    rflink21.addInterface(rue1_enb2_rf)	
 
-    rflink1 = request.RFLink("rflink1")
-    rflink1.addInterface(enb1_rue1_rf)
-    rflink1.addInterface(rue1_enb1_rf)
+    enb3_rue1_rf = enb3.addInterface("rue1_rf")
+    rue1_enb3_rf = rue1.addInterface("enb3_rf")
+    rflink31 = request.RFLink("rflink31")
+    rflink31.addInterface(enb3_rue1_rf)
+    rflink31.addInterface(rue1_enb3_rf)	
+
+    enb4_rue1_rf = enb4.addInterface("rue1_rf")
+    rue1_enb4_rf = rue1.addInterface("enb4_rf")
+    rflink41 = request.RFLink("rflink41")
+    rflink41.addInterface(enb4_rue1_rf)
+    rflink41.addInterface(rue1_enb4_rf)	
     
+    #ue2---------------------------------------------------
+    enb1_rue2_rf = enb1.addInterface("rue2_rf")
+    rue2_enb1_rf = rue1.addInterface("enb1_rf")
+    rflink12 = request.RFLink("rflink12")
+    rflink12.addInterface(enb1_rue2_rf)
+    rflink12.addInterface(rue2_enb1_rf)
+	
+    enb2_rue2_rf = enb2.addInterface("rue2_rf")
+    rue2_enb2_rf = rue2.addInterface("enb2_rf")
+    rflink22 = request.RFLink("rflink22")
+    rflink22.addInterface(enb2_rue2_rf)
+    rflink22.addInterface(rue2_enb2_rf)	
+
+    enb3_rue2_rf = enb3.addInterface("rue2_rf")
+    rue2_enb3_rf = rue2.addInterface("enb3_rf")
+    rflink32 = request.RFLink("rflink32")
+    rflink32.addInterface(enb3_rue2_rf)
+    rflink32.addInterface(rue2_enb3_rf)	
+
+    enb4_rue2_rf = enb4.addInterface("rue2_rf")
+    rue2_enb4_rf = rue2.addInterface("enb4_rf")
+    rflink42 = request.RFLink("rflink42")
+    rflink42.addInterface(enb4_rue2_rf)
+    rflink42.addInterface(rue2_enb4_rf)		
+
+    #ue3---------------------------------------------------
+    enb1_rue3_rf = enb1.addInterface("rue3_rf")
+    rue3_enb1_rf = rue3.addInterface("enb1_rf")
+    rflink13 = request.RFLink("rflink13")
+    rflink13.addInterface(enb1_rue3_rf)
+    rflink13.addInterface(rue3_enb1_rf)
+	
+    enb2_rue3_rf = enb2.addInterface("rue3_rf")
+    rue3_enb2_rf = rue3.addInterface("enb2_rf")
+    rflink23 = request.RFLink("rflink23")
+    rflink23.addInterface(enb2_rue3_rf)
+    rflink23.addInterface(rue3_enb2_rf)	
+
+    enb3_rue3_rf = enb3.addInterface("rue3_rf")
+    rue3_enb3_rf = rue3.addInterface("enb3_rf")
+    rflink33 = request.RFLink("rflink33")
+    rflink33.addInterface(enb3_rue3_rf)
+    rflink33.addInterface(rue3_enb3_rf)	
+
+    enb4_rue3_rf = enb4.addInterface("rue3_rf")
+    rue3_enb4_rf = rue3.addInterface("enb4_rf")
+    rflink43 = request.RFLink("rflink43")
+    rflink43.addInterface(enb4_rue3_rf)
+    rflink43.addInterface(rue3_enb4_rf)	
+
+    #ue4---------------------------------------------------
+    enb1_rue4_rf = enb1.addInterface("rue4_rf")
+    rue4_enb1_rf = rue4.addInterface("enb1_rf")
+    rflink14 = request.RFLink("rflink14")
+    rflink14.addInterface(enb1_rue4_rf)
+    rflink14.addInterface(rue4_enb1_rf)
+	
+    enb2_rue4_rf = enb2.addInterface("rue4_rf")
+    rue4_enb2_rf = rue4.addInterface("enb2_rf")
+    rflink24 = request.RFLink("rflink24")
+    rflink24.addInterface(enb2_rue4_rf)
+    rflink24.addInterface(rue4_enb2_rf)	
+
+    enb3_rue4_rf = enb3.addInterface("rue4_rf")
+    rue4_enb3_rf = rue4.addInterface("enb3_rf")
+    rflink34 = request.RFLink("rflink34")
+    rflink34.addInterface(enb3_rue4_rf)
+    rflink34.addInterface(rue4_enb3_rf)	
+
+    enb4_rue4_rf = enb4.addInterface("rue4_rf")
+    rue4_enb4_rf = rue4.addInterface("enb4_rf")
+    rflink44 = request.RFLink("rflink44")
+    rflink44.addInterface(enb4_rue4_rf)
+    rflink44.addInterface(rue4_enb4_rf)	
     
     # Add a link connecting the NUC eNB and the OAI EPC node.
     #epclink].addNode(enb1)
     #epclink2.addNode(enb2)
     hacklan.addInterface(enb1_s1_if)
     hacklan.addInterface(enb2_s1_if)
-
+    hacklan.addInterface(enb3_s1_if)
+    hacklan.addInterface(enb4_s1_if)
 
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
