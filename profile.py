@@ -189,7 +189,7 @@ else:
     enb4.hardware_type = GLOBALS.NUC_HWTYPE
     enb4.disk_image = GLOBALS.OAI_ENB_IMG
     enb4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    connectOAI_DS(enb2, 0)
+    connectOAI_DS(enb4, 0)
     enb4.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     #enb4_rue1_rf = enb2.addInterface("rue1_rf")
     enb4_s1_if = enb4.addInterface("enb4_s1if")
@@ -205,18 +205,10 @@ else:
     rue1.adb_target = "adb-tgt"
     #rue1_enb1_rf = rue1.addInterface("enb1_rf")
     #rue1_enb2_rf = rue1.addInterface("enb2_rf")
-
-    rue1 = request.UE("rue1")
-    if params.FIXED_UE:
-        rue1.component_id = params.FIXED_UE
-    rue1.hardware_type = GLOBALS.UE_HWTYPE
-    rue1.disk_image = GLOBALS.UE_IMG
-    rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    rue1.adb_target = "adb-tgt" 	
-	
+		
     rue2 = request.UE("rue2")
     if params.FIXED_UE:
-        rue1.component_id = params.FIXED_UE
+        rue2.component_id = params.FIXED_UE
     rue2.hardware_type = GLOBALS.UE_HWTYPE
     rue2.disk_image = GLOBALS.UE_IMG
     rue2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -224,7 +216,7 @@ else:
 	
     rue3 = request.UE("rue3")
     if params.FIXED_UE:
-        rue1.component_id = params.FIXED_UE
+        rue3.component_id = params.FIXED_UE
     rue3.hardware_type = GLOBALS.UE_HWTYPE
     rue3.disk_image = GLOBALS.UE_IMG
     rue3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -232,7 +224,7 @@ else:
 
     rue4 = request.UE("rue4")
     if params.FIXED_UE:
-        rue1.component_id = params.FIXED_UE
+        rue4.component_id = params.FIXED_UE
     rue4.hardware_type = GLOBALS.UE_HWTYPE
     rue4.disk_image = GLOBALS.UE_IMG
     rue4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
