@@ -107,6 +107,7 @@ pc.defineParameter("FIXED_ENB", "Bind to a specific eNodeB",
                    portal.ParameterType.STRING, "", advanced=True,
                    longDescription="Input the name of a PhantomNet eNodeB device to allocate (e.g., 'nuc1').  Leave blank to let the mapping algorithm choose.  If you bind both UE and eNodeB devices, mapping will fail unless there is path between them via the attenuator matrix.")
 
+
 pc.defineParameter("TYPE", "Experiment type",
                    portal.ParameterType.STRING,"ota",[("sim","Simulated UE"),("atten","Real UE with attenuator"),("ota","Over the air")],
                    longDescription="*Simulated UE*: OAI simulated UE connects to an OAI eNodeB and EPC. *Real UE with attenuator*: Real RF devices will be connected via transmission lines with variable attenuator control. *Over the air*: Real RF devices with real antennas and transmissions propagated through free space will be selected.")
@@ -114,6 +115,15 @@ pc.defineParameter("TYPE", "Experiment type",
 #pc.defineParameter("RADIATEDRF", "Radiated (over-the-air) RF transmissions",
 #                   portal.ParameterType.BOOLEAN, False,
 #                   longDescription="When enabled, RF devices with real antennas and transmissions propagated through free space will be selected.  Leave disabled (default) to assign RF devices connected via transmission lines with variable attenuator control.")
+
+pc.defineParameter("NUM_UEs", "Number of UEs 1-4",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the Num of UE nodes to allocate (e.g., '2'). ")
+pc.defineParameter("NUM_ENBs", "Number of eNodeBs",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the Num of eNodeB devices to allocate (e.g., '2')")
+
+
 
 params = pc.bindParameters()
 
@@ -157,42 +167,43 @@ else:
     #enb1_rue1_rf = enb1.addInterface("rue1_rf")
     enb1_s1_if = enb1.addInterface("enb1_s1if")
 
-
+    if params.NUM_ENBs>=2:
     # Add another NUC eNB node.
-    enb2 = request.RawPC("enb2")
-    if params.FIXED_ENB:
-        enb2.component_id = params.FIXED_ENB
-    enb2.hardware_type = GLOBALS.NUC_HWTYPE
-    enb2.disk_image = GLOBALS.OAI_ENB_IMG
-    enb2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    connectOAI_DS(enb2, 0)
-    enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
-    #enb2_rue1_rf = enb2.addInterface("rue1_rf")
-    enb2_s1_if = enb2.addInterface("enb2_s1if")
+	    enb2 = request.RawPC("enb2")
+	    if params.FIXED_ENB:
+		enb2.component_id = params.FIXED_ENB
+	    enb2.hardware_type = GLOBALS.NUC_HWTYPE
+	    enb2.disk_image = GLOBALS.OAI_ENB_IMG
+	    enb2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    connectOAI_DS(enb2, 0)
+	    enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+	    #enb2_rue1_rf = enb2.addInterface("rue1_rf")
+	    enb2_s1_if = enb2.addInterface("enb2_s1if")
 
-    enb3 = request.RawPC("enb3")
-    if params.FIXED_ENB:
-        enb3.component_id = params.FIXED_ENB
-    enb3.hardware_type = GLOBALS.NUC_HWTYPE
-    enb3.disk_image = GLOBALS.OAI_ENB_IMG
-    enb3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    connectOAI_DS(enb3, 0)
-    enb3.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
-    #enb3_rue1_rf = enb1.addInterface("rue1_rf")
-    enb3_s1_if = enb3.addInterface("enb3_s1if")
+    if params.NUM_ENBs>=3:
+	    enb3 = request.RawPC("enb3")
+	    if params.FIXED_ENB:
+		enb3.component_id = params.FIXED_ENB
+	    enb3.hardware_type = GLOBALS.NUC_HWTYPE
+	    enb3.disk_image = GLOBALS.OAI_ENB_IMG
+	    enb3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    connectOAI_DS(enb3, 0)
+	    enb3.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+	    #enb3_rue1_rf = enb1.addInterface("rue1_rf")
+	    enb3_s1_if = enb3.addInterface("enb3_s1if")
 
-
+    if params.NUM_ENBs>=4:
     # Add another NUC eNB node.
-    enb4 = request.RawPC("enb4")
-    if params.FIXED_ENB:
-        enb4.component_id = params.FIXED_ENB
-    enb4.hardware_type = GLOBALS.NUC_HWTYPE
-    enb4.disk_image = GLOBALS.OAI_ENB_IMG
-    enb4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    connectOAI_DS(enb4, 0)
-    enb4.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
-    #enb4_rue1_rf = enb2.addInterface("rue1_rf")
-    enb4_s1_if = enb4.addInterface("enb4_s1if")
+	    enb4 = request.RawPC("enb4")
+	    if params.FIXED_ENB:
+		enb4.component_id = params.FIXED_ENB
+	    enb4.hardware_type = GLOBALS.NUC_HWTYPE
+	    enb4.disk_image = GLOBALS.OAI_ENB_IMG
+	    enb4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    connectOAI_DS(enb4, 0)
+	    enb4.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+	    #enb4_rue1_rf = enb2.addInterface("rue1_rf")
+	    enb4_s1_if = enb4.addInterface("enb4_s1if")
 
     # Add an OTS (Nexus 5) UE
     #rue1 = request.UE("rue1",component_id='ue6')
@@ -205,30 +216,33 @@ else:
     rue1.adb_target = "adb-tgt"
     #rue1_enb1_rf = rue1.addInterface("enb1_rf")
     #rue1_enb2_rf = rue1.addInterface("enb2_rf")
-		
-    rue2 = request.UE("rue2")
-    if params.FIXED_UE:
-        rue2.component_id = params.FIXED_UE
-    rue2.hardware_type = GLOBALS.UE_HWTYPE
-    rue2.disk_image = GLOBALS.UE_IMG
-    rue2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    rue2.adb_target = "adb-tgt" 
 	
-    rue3 = request.UE("rue3")
-    if params.FIXED_UE:
-        rue3.component_id = params.FIXED_UE
-    rue3.hardware_type = GLOBALS.UE_HWTYPE
-    rue3.disk_image = GLOBALS.UE_IMG
-    rue3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    rue3.adb_target = "adb-tgt" 
+    if params.NUM_UEs>=2:	
+	    rue2 = request.UE("rue2")
+	    if params.FIXED_UE:
+		rue2.component_id = params.FIXED_UE
+	    rue2.hardware_type = GLOBALS.UE_HWTYPE
+	    rue2.disk_image = GLOBALS.UE_IMG
+	    rue2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    rue2.adb_target = "adb-tgt" 
+	
+    if params.NUM_UEs>=3:		
+	    rue3 = request.UE("rue3")
+	    if params.FIXED_UE:
+		rue3.component_id = params.FIXED_UE
+	    rue3.hardware_type = GLOBALS.UE_HWTYPE
+	    rue3.disk_image = GLOBALS.UE_IMG
+	    rue3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    rue3.adb_target = "adb-tgt" 
 
-    rue4 = request.UE("rue4")
-    if params.FIXED_UE:
-        rue4.component_id = params.FIXED_UE
-    rue4.hardware_type = GLOBALS.UE_HWTYPE
-    rue4.disk_image = GLOBALS.UE_IMG
-    rue4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    rue4.adb_target = "adb-tgt" 	
+    if params.NUM_UEs>=4:	
+	    rue4 = request.UE("rue4")
+	    if params.FIXED_UE:
+		rue4.component_id = params.FIXED_UE
+	    rue4.hardware_type = GLOBALS.UE_HWTYPE
+	    rue4.disk_image = GLOBALS.UE_IMG
+	    rue4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+	    rue4.adb_target = "adb-tgt" 	
 	
 	
 	
@@ -240,106 +254,125 @@ else:
     rflink11.addInterface(enb1_rue1_rf)
     rflink11.addInterface(rue1_enb1_rf)
 	
-    enb2_rue1_rf = enb2.addInterface("rue1_rf")
-    rue1_enb2_rf = rue1.addInterface("enb2_rf")
-    rflink21 = request.RFLink("rflink21")
-    rflink21.addInterface(enb2_rue1_rf)
-    rflink21.addInterface(rue1_enb2_rf)	
+    if params.NUM_ENBs>=2:
+	    enb2_rue1_rf = enb2.addInterface("rue1_rf")
+	    rue1_enb2_rf = rue1.addInterface("enb2_rf")
+	    rflink21 = request.RFLink("rflink21")
+	    rflink21.addInterface(enb2_rue1_rf)
+	    rflink21.addInterface(rue1_enb2_rf)	
 
-    enb3_rue1_rf = enb3.addInterface("rue1_rf")
-    rue1_enb3_rf = rue1.addInterface("enb3_rf")
-    rflink31 = request.RFLink("rflink31")
-    rflink31.addInterface(enb3_rue1_rf)
-    rflink31.addInterface(rue1_enb3_rf)	
+    if params.NUM_ENBs>=3:	
+	    enb3_rue1_rf = enb3.addInterface("rue1_rf")
+	    rue1_enb3_rf = rue1.addInterface("enb3_rf")
+	    rflink31 = request.RFLink("rflink31")
+	    rflink31.addInterface(enb3_rue1_rf)
+	    rflink31.addInterface(rue1_enb3_rf)	
 
-    enb4_rue1_rf = enb4.addInterface("rue1_rf")
-    rue1_enb4_rf = rue1.addInterface("enb4_rf")
-    rflink41 = request.RFLink("rflink41")
-    rflink41.addInterface(enb4_rue1_rf)
-    rflink41.addInterface(rue1_enb4_rf)	
+    if params.NUM_ENBs>=4:			
+	    enb4_rue1_rf = enb4.addInterface("rue1_rf")
+	    rue1_enb4_rf = rue1.addInterface("enb4_rf")
+	    rflink41 = request.RFLink("rflink41")
+	    rflink41.addInterface(enb4_rue1_rf)
+	    rflink41.addInterface(rue1_enb4_rf)	
     
+    if params.NUM_UEs>=2:
     #ue2---------------------------------------------------
-    enb1_rue2_rf = enb1.addInterface("rue2_rf")
-    rue2_enb1_rf = rue2.addInterface("enb1_rf")
-    rflink12 = request.RFLink("rflink12")
-    rflink12.addInterface(enb1_rue2_rf)
-    rflink12.addInterface(rue2_enb1_rf)
-	
-    enb2_rue2_rf = enb2.addInterface("rue2_rf")
-    rue2_enb2_rf = rue2.addInterface("enb2_rf")
-    rflink22 = request.RFLink("rflink22")
-    rflink22.addInterface(enb2_rue2_rf)
-    rflink22.addInterface(rue2_enb2_rf)	
+	    enb1_rue2_rf = enb1.addInterface("rue2_rf")
+	    rue2_enb1_rf = rue2.addInterface("enb1_rf")
+	    rflink12 = request.RFLink("rflink12")
+	    rflink12.addInterface(enb1_rue2_rf)
+	    rflink12.addInterface(rue2_enb1_rf)
 
-    enb3_rue2_rf = enb3.addInterface("rue2_rf")
-    rue2_enb3_rf = rue2.addInterface("enb3_rf")
-    rflink32 = request.RFLink("rflink32")
-    rflink32.addInterface(enb3_rue2_rf)
-    rflink32.addInterface(rue2_enb3_rf)	
+	    if params.NUM_ENBs>=2:
+		    enb2_rue2_rf = enb2.addInterface("rue2_rf")
+		    rue2_enb2_rf = rue2.addInterface("enb2_rf")
+		    rflink22 = request.RFLink("rflink22")
+		    rflink22.addInterface(enb2_rue2_rf)
+		    rflink22.addInterface(rue2_enb2_rf)	
 
-    enb4_rue2_rf = enb4.addInterface("rue2_rf")
-    rue2_enb4_rf = rue2.addInterface("enb4_rf")
-    rflink42 = request.RFLink("rflink42")
-    rflink42.addInterface(enb4_rue2_rf)
-    rflink42.addInterface(rue2_enb4_rf)		
+	    if params.NUM_ENBs>=3:	
+		    enb3_rue2_rf = enb3.addInterface("rue2_rf")
+		    rue2_enb3_rf = rue2.addInterface("enb3_rf")
+		    rflink32 = request.RFLink("rflink32")
+		    rflink32.addInterface(enb3_rue2_rf)
+		    rflink32.addInterface(rue2_enb3_rf)	
 
-    #ue3---------------------------------------------------
-    enb1_rue3_rf = enb1.addInterface("rue3_rf")
-    rue3_enb1_rf = rue3.addInterface("enb1_rf")
-    rflink13 = request.RFLink("rflink13")
-    rflink13.addInterface(enb1_rue3_rf)
-    rflink13.addInterface(rue3_enb1_rf)
-	
-    enb2_rue3_rf = enb2.addInterface("rue3_rf")
-    rue3_enb2_rf = rue3.addInterface("enb2_rf")
-    rflink23 = request.RFLink("rflink23")
-    rflink23.addInterface(enb2_rue3_rf)
-    rflink23.addInterface(rue3_enb2_rf)	
+	    if params.NUM_ENBs>=4:	
+		    enb4_rue2_rf = enb4.addInterface("rue2_rf")
+		    rue2_enb4_rf = rue2.addInterface("enb4_rf")
+		    rflink42 = request.RFLink("rflink42")
+		    rflink42.addInterface(enb4_rue2_rf)
+		    rflink42.addInterface(rue2_enb4_rf)		
 
-    enb3_rue3_rf = enb3.addInterface("rue3_rf")
-    rue3_enb3_rf = rue3.addInterface("enb3_rf")
-    rflink33 = request.RFLink("rflink33")
-    rflink33.addInterface(enb3_rue3_rf)
-    rflink33.addInterface(rue3_enb3_rf)	
+    if params.NUM_UEs>=3:
+	    #ue3---------------------------------------------------
+	    enb1_rue3_rf = enb1.addInterface("rue3_rf")
+	    rue3_enb1_rf = rue3.addInterface("enb1_rf")
+	    rflink13 = request.RFLink("rflink13")
+	    rflink13.addInterface(enb1_rue3_rf)
+	    rflink13.addInterface(rue3_enb1_rf)
 
-    enb4_rue3_rf = enb4.addInterface("rue3_rf")
-    rue3_enb4_rf = rue3.addInterface("enb4_rf")
-    rflink43 = request.RFLink("rflink43")
-    rflink43.addInterface(enb4_rue3_rf)
-    rflink43.addInterface(rue3_enb4_rf)	
+	    if params.NUM_ENBs>=2:
+		    enb2_rue3_rf = enb2.addInterface("rue3_rf")
+		    rue3_enb2_rf = rue3.addInterface("enb2_rf")
+		    rflink23 = request.RFLink("rflink23")
+		    rflink23.addInterface(enb2_rue3_rf)
+		    rflink23.addInterface(rue3_enb2_rf)	
 
-    #ue4---------------------------------------------------
-    enb1_rue4_rf = enb1.addInterface("rue4_rf")
-    rue4_enb1_rf = rue4.addInterface("enb1_rf")
-    rflink14 = request.RFLink("rflink14")
-    rflink14.addInterface(enb1_rue4_rf)
-    rflink14.addInterface(rue4_enb1_rf)
-	
-    enb2_rue4_rf = enb2.addInterface("rue4_rf")
-    rue4_enb2_rf = rue4.addInterface("enb2_rf")
-    rflink24 = request.RFLink("rflink24")
-    rflink24.addInterface(enb2_rue4_rf)
-    rflink24.addInterface(rue4_enb2_rf)	
+	    if params.NUM_ENBs>=3:		
+		    enb3_rue3_rf = enb3.addInterface("rue3_rf")
+		    rue3_enb3_rf = rue3.addInterface("enb3_rf")
+		    rflink33 = request.RFLink("rflink33")
+		    rflink33.addInterface(enb3_rue3_rf)
+		    rflink33.addInterface(rue3_enb3_rf)	
+	    
+	    if params.NUM_ENBs>=4:
+		    enb4_rue3_rf = enb4.addInterface("rue3_rf")
+		    rue3_enb4_rf = rue3.addInterface("enb4_rf")
+		    rflink43 = request.RFLink("rflink43")
+		    rflink43.addInterface(enb4_rue3_rf)
+		    rflink43.addInterface(rue3_enb4_rf)	
 
-    enb3_rue4_rf = enb3.addInterface("rue4_rf")
-    rue4_enb3_rf = rue4.addInterface("enb3_rf")
-    rflink34 = request.RFLink("rflink34")
-    rflink34.addInterface(enb3_rue4_rf)
-    rflink34.addInterface(rue4_enb3_rf)	
 
-    enb4_rue4_rf = enb4.addInterface("rue4_rf")
-    rue4_enb4_rf = rue4.addInterface("enb4_rf")
-    rflink44 = request.RFLink("rflink44")
-    rflink44.addInterface(enb4_rue4_rf)
-    rflink44.addInterface(rue4_enb4_rf)	
+    if params.NUM_UEs>=4:
+	    #ue4---------------------------------------------------
+	    enb1_rue4_rf = enb1.addInterface("rue4_rf")
+	    rue4_enb1_rf = rue4.addInterface("enb1_rf")
+	    rflink14 = request.RFLink("rflink14")
+	    rflink14.addInterface(enb1_rue4_rf)
+	    rflink14.addInterface(rue4_enb1_rf)
+
+	    if params.NUM_ENBs>=2:
+		    enb2_rue4_rf = enb2.addInterface("rue4_rf")
+		    rue4_enb2_rf = rue4.addInterface("enb2_rf")
+		    rflink24 = request.RFLink("rflink24")
+		    rflink24.addInterface(enb2_rue4_rf)
+		    rflink24.addInterface(rue4_enb2_rf)	
+
+	    if params.NUM_ENBs>=3:
+		    enb3_rue4_rf = enb3.addInterface("rue4_rf")
+		    rue4_enb3_rf = rue4.addInterface("enb3_rf")
+		    rflink34 = request.RFLink("rflink34")
+		    rflink34.addInterface(enb3_rue4_rf)
+		    rflink34.addInterface(rue4_enb3_rf)	
+
+	    if params.NUM_ENBs>=4:
+		    enb4_rue4_rf = enb4.addInterface("rue4_rf")
+		    rue4_enb4_rf = rue4.addInterface("enb4_rf")
+		    rflink44 = request.RFLink("rflink44")
+		    rflink44.addInterface(enb4_rue4_rf)
+		    rflink44.addInterface(rue4_enb4_rf)	
     
     # Add a link connecting the NUC eNB and the OAI EPC node.
     #epclink].addNode(enb1)
     #epclink2.addNode(enb2)
     hacklan.addInterface(enb1_s1_if)
-    hacklan.addInterface(enb2_s1_if)
-    hacklan.addInterface(enb3_s1_if)
-    hacklan.addInterface(enb4_s1_if)
+    if params.NUM_ENBs>=2:
+    	hacklan.addInterface(enb2_s1_if)
+    if params.NUM_ENBs>=3:
+	hacklan.addInterface(enb3_s1_if)
+    if params.NUM_ENBs>=4:
+	hacklan.addInterface(enb4_s1_if)
 
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
