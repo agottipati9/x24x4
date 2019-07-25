@@ -117,10 +117,10 @@ pc.defineParameter("TYPE", "Experiment type",
 #                   longDescription="When enabled, RF devices with real antennas and transmissions propagated through free space will be selected.  Leave disabled (default) to assign RF devices connected via transmission lines with variable attenuator control.")
 
 pc.defineParameter("NUM_UEs", "Number of UEs 1-4",
-                   portal.ParameterType.STRING, "", advanced=True,
+                   portal.ParameterType.INTEGER, "", advanced=True,
                    longDescription="Input the Num of UE nodes to allocate (e.g., '2'). ")
 pc.defineParameter("NUM_ENBs", "Number of eNodeBs",
-                   portal.ParameterType.STRING, "", advanced=True,
+                   portal.ParameterType.INTEGER, "", advanced=True,
                    longDescription="Input the Num of eNodeB devices to allocate (e.g., '2')")
 
 
