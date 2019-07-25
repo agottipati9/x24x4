@@ -100,10 +100,29 @@ pc = portal.Context()
 #
 # Profile parameters.
 #
-pc.defineParameter("FIXED_UE", "Bind to a specific UE",
+pc.defineParameter("FIXED_UE1", "Bind to a specific UE",
                    portal.ParameterType.STRING, "", advanced=True,
                    longDescription="Input the name of a PhantomNet UE node to allocate (e.g., 'ue1').  Leave blank to let the mapping algorithm choose.")
-pc.defineParameter("FIXED_ENB", "Bind to a specific eNodeB",
+pc.defineParameter("FIXED_UE2", "Bind to a specific UE",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet UE node to allocate (e.g., 'ue1').  Leave blank to let the mapping algorithm choose.")
+pc.defineParameter("FIXED_UE3", "Bind to a specific UE",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet UE node to allocate (e.g., 'ue1').  Leave blank to let the mapping algorithm choose.")
+pc.defineParameter("FIXED_UE4", "Bind to a specific UE",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet UE node to allocate (e.g., 'ue1').  Leave blank to let the mapping algorithm choose.")
+
+pc.defineParameter("FIXED_ENB1", "Bind to a specific eNodeB",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet eNodeB device to allocate (e.g., 'nuc1').  Leave blank to let the mapping algorithm choose.  If you bind both UE and eNodeB devices, mapping will fail unless there is path between them via the attenuator matrix.")
+pc.defineParameter("FIXED_ENB2", "Bind to a specific eNodeB",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet eNodeB device to allocate (e.g., 'nuc1').  Leave blank to let the mapping algorithm choose.  If you bind both UE and eNodeB devices, mapping will fail unless there is path between them via the attenuator matrix.")
+pc.defineParameter("FIXED_ENB3", "Bind to a specific eNodeB",
+                   portal.ParameterType.STRING, "", advanced=True,
+                   longDescription="Input the name of a PhantomNet eNodeB device to allocate (e.g., 'nuc1').  Leave blank to let the mapping algorithm choose.  If you bind both UE and eNodeB devices, mapping will fail unless there is path between them via the attenuator matrix.")
+pc.defineParameter("FIXED_ENB4", "Bind to a specific eNodeB",
                    portal.ParameterType.STRING, "", advanced=True,
                    longDescription="Input the name of a PhantomNet eNodeB device to allocate (e.g., 'nuc1').  Leave blank to let the mapping algorithm choose.  If you bind both UE and eNodeB devices, mapping will fail unless there is path between them via the attenuator matrix.")
 
@@ -155,8 +174,8 @@ else:
 
     # Add a NUC eNB node.
     enb1 = request.RawPC("enb1")
-    if params.FIXED_ENB:
-        enb1.component_id = params.FIXED_ENB
+    if params.FIXED_ENB1:
+        enb1.component_id = params.FIXED_ENB1
     enb1.hardware_type = GLOBALS.NUC_HWTYPE
     enb1.disk_image = GLOBALS.OAI_ENB_IMG
     enb1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -168,8 +187,8 @@ else:
     if params.NUM_ENBs>=2:
     # Add another NUC eNB node.
 	    enb2 = request.RawPC("enb2")
-	    if params.FIXED_ENB:
-		enb2.component_id = params.FIXED_ENB
+	    if params.FIXED_ENB2:
+		enb2.component_id = params.FIXED_ENB2
 	    enb2.hardware_type = GLOBALS.NUC_HWTYPE
 	    enb2.disk_image = GLOBALS.OAI_ENB_IMG
 	    enb2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -180,8 +199,8 @@ else:
 
     if params.NUM_ENBs>=3:
 	    enb3 = request.RawPC("enb3")
-	    if params.FIXED_ENB:
-		enb3.component_id = params.FIXED_ENB
+	    if params.FIXED_ENB3:
+		enb3.component_id = params.FIXED_ENB3
 	    enb3.hardware_type = GLOBALS.NUC_HWTYPE
 	    enb3.disk_image = GLOBALS.OAI_ENB_IMG
 	    enb3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -193,8 +212,8 @@ else:
     if params.NUM_ENBs>=4:
     # Add another NUC eNB node.
 	    enb4 = request.RawPC("enb4")
-	    if params.FIXED_ENB:
-		enb4.component_id = params.FIXED_ENB
+	    if params.FIXED_ENB4:
+		enb4.component_id = params.FIXED_ENB4
 	    enb4.hardware_type = GLOBALS.NUC_HWTYPE
 	    enb4.disk_image = GLOBALS.OAI_ENB_IMG
 	    enb4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -206,8 +225,8 @@ else:
     # Add an OTS (Nexus 5) UE
     #rue1 = request.UE("rue1",component_id='ue6')
     rue1 = request.UE("rue1")
-    if params.FIXED_UE:
-        rue1.component_id = params.FIXED_UE
+    if params.FIXED_UE1:
+        rue1.component_id = params.FIXED_UE1
     rue1.hardware_type = GLOBALS.UE_HWTYPE
     rue1.disk_image = GLOBALS.UE_IMG
     rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -217,8 +236,8 @@ else:
 	
     if params.NUM_UEs>=2:	
 	    rue2 = request.UE("rue2")
-	    if params.FIXED_UE:
-		rue2.component_id = params.FIXED_UE
+	    if params.FIXED_UE2:
+		rue2.component_id = params.FIXED_UE2
 	    rue2.hardware_type = GLOBALS.UE_HWTYPE
 	    rue2.disk_image = GLOBALS.UE_IMG
 	    rue2.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -226,8 +245,8 @@ else:
 	
     if params.NUM_UEs>=3:		
 	    rue3 = request.UE("rue3")
-	    if params.FIXED_UE:
-		rue3.component_id = params.FIXED_UE
+	    if params.FIXED_UE3:
+		rue3.component_id = params.FIXED_UE3
 	    rue3.hardware_type = GLOBALS.UE_HWTYPE
 	    rue3.disk_image = GLOBALS.UE_IMG
 	    rue3.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
@@ -235,8 +254,8 @@ else:
 
     if params.NUM_UEs>=4:	
 	    rue4 = request.UE("rue4")
-	    if params.FIXED_UE:
-		rue4.component_id = params.FIXED_UE
+	    if params.FIXED_UE4:
+		rue4.component_id = params.FIXED_UE4
 	    rue4.hardware_type = GLOBALS.UE_HWTYPE
 	    rue4.disk_image = GLOBALS.UE_IMG
 	    rue4.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
