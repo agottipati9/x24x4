@@ -223,7 +223,10 @@ else:
 
     # Add an OTS (Nexus 5) UE
     #rue1 = request.UE("rue1",component_id='ue6')
-    rue1 = request.UE("rue1")
+	if params.TYPE != 'srsUE':
+    	rue1 = request.UE("rue1")
+	else:
+		rue1 = request.rawPC("rue1")
     if params.FIXED_UE1:
         rue1.component_id = params.FIXED_UE1
 	if params.TYPE != "srsUE":
