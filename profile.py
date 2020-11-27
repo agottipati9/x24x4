@@ -66,7 +66,6 @@ class GLOBALS(object):
     OAI_SIM_DS = "urn:publicid:IDN+emulab.net:phantomnet+dataset+PhantomNet:oai"
     UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:ANDROID444-STD")
     ADB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-PNTOOLS")
-    SRS_UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU18-64-STD")
     OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
     OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
     OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
@@ -198,7 +197,7 @@ if params.TYPE != "srsUE":
     rue1.adb_target = "adb-tgt"
 else:
     rue1.hardware_type = GLOBALS.NUC_HWTYPE
-    rue1.disk_image = GLOBALS.SRS_UE_IMG
+    rue1.disk_image = GLOBALS.OAI_ENB_IMG
     rue1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
 
 # Create the RF link between the Nexus 5 UE and eNodeB
