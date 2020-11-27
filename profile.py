@@ -188,7 +188,7 @@ if params.NUM_ENBs >= 2:
 if params.TYPE != 'srsUE':
     rue1 = request.UE("rue1")
 else:
-    rue1 = request.rawPC("rue1")
+    rue1 = request.RawPC("rue1")
 if params.FIXED_UE1:
     rue1.component_id = params.FIXED_UE1
 if params.TYPE != "srsUE":
