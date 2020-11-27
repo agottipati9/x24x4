@@ -63,17 +63,18 @@ import geni.rspec.emulab.pnext as PN
 # Globals
 #
 class GLOBALS(object):
-    OAI_DS = "urn:publicid:IDN+emulab.net:phantomnet+ltdataset+oai-develop"
-    OAI_SIM_DS = "urn:publicid:IDN+emulab.net:phantomnet+dataset+PhantomNet:oai"
-    UE_IMG  = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:ANDROID444-STD")
-    ADB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-PNTOOLS")
-    OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
-    OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
-    OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
-    OAI_CONF_SCRIPT = "/usr/bin/sudo /local/repository/bin/config_oai.pl"
-    SIM_HWTYPE = "d430"
-    NUC_HWTYPE = "nuc5300"
-    UE_HWTYPE = "nexus5"
+	OAI_DS = "urn:publicid:IDN+emulab.net:phantomnet+ltdataset+oai-develop"
+	OAI_SIM_DS = "urn:publicid:IDN+emulab.net:phantomnet+dataset+PhantomNet:oai"
+	UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:ANDROID444-STD")
+	ADB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-PNTOOLS")
+	SRS_UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU18-64-STD")
+	OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
+	OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
+	OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
+	OAI_CONF_SCRIPT = "/usr/bin/sudo /local/repository/bin/config_oai.pl"
+	SIM_HWTYPE = "d430"
+	NUC_HWTYPE = "nuc5300"
+	UE_HWTYPE = "nexus5"
 
 def connectOAI_DS(node, sim):
     # Create remote read-write clone dataset object bound to OAI dataset
@@ -128,12 +129,9 @@ pc.defineParameter("FIXED_ENB4", "Bind to a specific eNodeB",
 
 
 pc.defineParameter("TYPE", "Experiment type",
-                   portal.ParameterType.STRING,"ota",[("sim","Simulated UE"),("atten","Real UE with attenuator"),("ota","Over the air")],
-                   longDescription="*Simulated UE*: OAI simulated UE connects to an OAI eNodeB and EPC. *Real UE with attenuator*: Real RF devices will be connected via transmission lines with variable attenuator control. *Over the air*: Real RF devices with real antennas and transmissions propagated through free space will be selected.")
+                   portal.ParameterType.STRING,"ota",[("sim","Simulated UE"),("atten","Real UE with attenuator"),("srsUE","srsUE with attenuator"),("ota","Over the air")],
+                   longDescription="*Simulated UE*: OAI simulated UE connects to an OAI eNodeB and EPC. *Real UE/srsUE with attenuator*: Real RF devices will be connected via transmission lines with variable attenuator control. *Over the air*: Real RF devices with real antennas and transmissions propagated through free space will be selected.")
 
-#pc.defineParameter("RADIATEDRF", "Radiated (over-the-air) RF transmissions",
-#                   portal.ParameterType.BOOLEAN, False,
-#                   longDescription="When enabled, RF devices with real antennas and transmissions propagated through free space will be selected.  Leave disabled (default) to assign RF devices connected via transmission lines with variable attenuator control.")
 
 pc.defineParameter("NUM_UEs", "Number of UEs 1-4",
                    portal.ParameterType.INTEGER, 1)
@@ -168,9 +166,10 @@ if params.TYPE == "sim":
     connectOAI_DS(sim_enb, 1)
     epclink.addNode(sim_enb)
 else:
-    # Add a node to act as the ADB target host
-    adb_t = request.RawPC("adb-tgt")
-    adb_t.disk_image = GLOBALS.ADB_IMG
+	if params.TYPE != "srsUE":
+		# Add a node to act as the ADB target host
+		adb_t = request.RawPC("adb-tgt")
+		adb_t.disk_image = GLOBALS.ADB_IMG
 
     # Add a NUC eNB node.
     enb1 = request.RawPC("enb1")
@@ -227,10 +226,15 @@ else:
     rue1 = request.UE("rue1")
     if params.FIXED_UE1:
         rue1.component_id = params.FIXED_UE1
-    rue1.hardware_type = GLOBALS.UE_HWTYPE
-    rue1.disk_image = GLOBALS.UE_IMG
-    rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
-    rue1.adb_target = "adb-tgt"
+	if params.TYPE != "srsUE":
+		rue1.hardware_type = GLOBALS.UE_HWTYPE
+		rue1.disk_image = GLOBALS.UE_IMG
+		rue1.Desire( "rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1 )
+		rue1.adb_target = "adb-tgt"
+	else:
+		rue1.hardware_type = GLOBALS.NUC_HWTYPE
+		rue1.disk_image = GLOBALS.SRS_UE_IMG
+		rue1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
     #rue1_enb1_rf = rue1.addInterface("enb1_rf")
     #rue1_enb2_rf = rue1.addInterface("enb2_rf")
 	
