@@ -60,7 +60,7 @@ class GLOBALS(object):
     FLEXRAN_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/FlexRAN/install_FlexRAN.sh"
     OAI_INSTALL_SCRIPT1 = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB1.sh"
     OAI_INSTALL_SCRIPT2 = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB2.sh"
-    NEXTEPC_INSTALL_SCRIPT = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB2.sh"
+    NEXTEPC_INSTALL_SCRIPT = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/NextEPC/install_nextEPC.sh"
     SIM_HWTYPE = "d430"
     NUC_HWTYPE = "nuc5300"
     UE_HWTYPE = "nexus5"
