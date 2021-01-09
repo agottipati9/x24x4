@@ -116,10 +116,10 @@ pc.defineParameter("TYPE", "Experiment type",
                                    "lines with variable attenuator control. *Over the air*: Real RF devices with real "
                                    "antennas and transmissions propagated through free space will be selected.")
 
-pc.defineParameter("NUM_UEs", "Number of UEs 1",
-                   portal.ParameterType.INTEGER, 1)
-pc.defineParameter("NUM_ENBs", "Number of eNodeBs 2",
-                   portal.ParameterType.INTEGER, 1)
+# pc.defineParameter("NUM_UEs", "Number of UEs 1",
+#                    portal.ParameterType.INTEGER, 1)
+# pc.defineParameter("NUM_ENBs", "Number of eNodeBs 2",
+#                    portal.ParameterType.INTEGER, 1)
 
 params = pc.bindParameters()
 
@@ -151,7 +151,7 @@ else:
         adb_t = request.RawPC("adb-tgt")
         adb_t.disk_image = GLOBALS.ADB_IMG
 
-    # Add a NUC eNB node.
+# Add a NUC eNB node.
 enb1 = request.RawPC("enb1")
 if params.FIXED_ENB1:
     enb1.component_id = params.FIXED_ENB1
@@ -162,17 +162,16 @@ enb1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
 enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_INSTALL_SCRIPT1))
 enb1_s1_if = enb1.addInterface("enb1_s1if")
 
-if params.NUM_ENBs >= 2:
-    # Add another NUC eNB node.
-    enb2 = request.RawPC("enb2")
-    if params.FIXED_ENB2:
-        enb2.component_id = params.FIXED_ENB2
-    enb2.hardware_type = GLOBALS.NUC_HWTYPE
-    enb2.disk_image = GLOBALS.SRS_ENB_IMG
-    enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-    # connectOAI_DS(enb2, 0)
-    enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_INSTALL_SCRIPT2))
-    enb2_s1_if = enb2.addInterface("enb2_s1if")
+# Add another NUC eNB node.
+enb2 = request.RawPC("enb2")
+if params.FIXED_ENB2:
+    enb2.component_id = params.FIXED_ENB2
+enb2.hardware_type = GLOBALS.NUC_HWTYPE
+enb2.disk_image = GLOBALS.SRS_ENB_IMG
+enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
+# connectOAI_DS(enb2, 0)
+enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_INSTALL_SCRIPT2))
+enb2_s1_if = enb2.addInterface("enb2_s1if")
 
 # Add an OTS (Nexus 5) UE
 if params.TYPE != 'srsUE':
@@ -199,17 +198,15 @@ rflink11 = request.RFLink("rflink11")
 rflink11.addInterface(enb1_rue1_rf)
 rflink11.addInterface(rue1_enb1_rf)
 
-if params.NUM_ENBs >= 2:
-    enb2_rue1_rf = enb2.addInterface("rue1_rf")
-    rue1_enb2_rf = rue1.addInterface("enb2_rf")
-    rflink21 = request.RFLink("rflink21")
-    rflink21.addInterface(enb2_rue1_rf)
-    rflink21.addInterface(rue1_enb2_rf)
+enb2_rue1_rf = enb2.addInterface("rue1_rf")
+rue1_enb2_rf = rue1.addInterface("enb2_rf")
+rflink21 = request.RFLink("rflink21")
+rflink21.addInterface(enb2_rue1_rf)
+rflink21.addInterface(rue1_enb2_rf)
 
 # Add a link connecting the NUC eNB and the OAI EPC node.
 hacklan.addInterface(enb1_s1_if)
-if params.NUM_ENBs >= 2:
-    hacklan.addInterface(enb2_s1_if)
+hacklan.addInterface(enb2_s1_if)
 
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
