@@ -33,7 +33,7 @@ EOF
     sudo ip addr add 192.168.0.1/24 dev pgwtun &&
     sudo ip link set up dev pgwtun &&
     sudo iptables -t nat -A POSTROUTING -o `cat /var/emulab/boot/controlif` -j MASQUERADE &&
-    sudo cp ~/local/repository/etc/NextEPC/nextepc.conf /opt/nextepc/install/etc/nextepc/nextepc.conf
+    sudo cp /local/repository/etc/NextEPC/nextepc.conf /opt/nextepc/install/etc/nextepc/nextepc.conf
 } || {
 sudo cat << EOF > /etc/systemd/network/98-nextepc.netdev 
 [NetDev]
@@ -45,5 +45,5 @@ sudo systemctl restart systemd-networkd
 sudo ip addr add 192.168.0.1/24 dev pgwtun
 sudo ip link set up dev pgwtun
 sudo iptables -t nat -A POSTROUTING -o `cat /var/emulab/boot/controlif` -j MASQUERADE
-sudo cp ~/local/repository/etc/NextEPC/nextepc.conf /opt/nextepc/install/etc/nextepc/nextepc.conf
+sudo cp /local/repository/etc/NextEPC/nextepc.conf /opt/nextepc/install/etc/nextepc/nextepc.conf
 }
