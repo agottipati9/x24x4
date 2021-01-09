@@ -13,43 +13,28 @@ tourDescription = """
 Use this profile to instantiate an experiment using Open Air Interface
 to realize an end-to-end SDR-based mobile network. This profile includes
 the following resources:
-
   * Off-the-shelf Nexus 5 UE running Android 4.4.4 KitKat ('rue1')
   * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb1')
   * All-in-one EPC node (HSS, MME, SPGW) running OAI on Ubuntu 16 ('epc')
   * A node providing out-of-band ADB access to the UE ('adb-tgt')
-
 PhantomNet startup scripts automatically configure OAI for the
 specific allocated resources.
-
 For more detailed information:
-
   * [Getting Started](https://gitlab.flux.utah.edu/powder-profiles/OAI-Real-Hardware/blob/master/README.md)
-
 """;
 
 tourInstructions = """
 After booting is complete,
 For Simulated UE, log onto `epc` node and run:
-
     sudo /local/repository/bin/start_oai.pl -r sim
-
 Else, log onto either the `enb1` or `epc` nodes. From there, you will be able to start all OAI services across the network by running:
-
     sudo /local/repository/bin/start_oai.pl
-
 Above command will stop any currently running OAI services, start all services (both epc and enodeb) again, and then interactively show a tail of the logs of the mme and enodeb services. Once you see the logs, you can exit at any time with Ctrl-C, but the services stay running in the background and save logs to `/var/log/oai/*` on the `enb1` and `epc` nodes.
-
 Once all the services are running, the UE device will typically connect on its own, but if it doesn't you can reboot the phone. You can manage the UE by logging into the `adb-tgt` node, running `pnadb -a` to connect, and then managing it via any `adb` command such as `adb shell` or `adb reboot`.
-
 For Simulated UE experiment, check the connectivity by logging into the `sim-enb` node and run:
-
     ping -I oip1 8.8.8.8
-
 While OAI is still a system in development and may be unstable, you can usually recover from any issue by running `start_oai.pl` to restart all the services.
-
   * [Full Documentation](https://gitlab.flux.utah.edu/powder-profiles/OAI-Real-Hardware/blob/master/README.md)
-
 """;
 
 #
@@ -67,7 +52,9 @@ class GLOBALS(object):
     UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:ANDROID444-STD")
     ADB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-PNTOOLS")
     OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
+    SRS_ENB_IMG = "urn:publicid:IDN+emulab.net+image+PowderProfiles:U18LL-SRSLTE:1"
     OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
+    SRS_ENB_IMG = "urn:publicid:IDN+emulab.net+image+PowderProfiles:U18LL-SRSLTE:1"
     OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
     OAI_CONF_SCRIPT = "/usr/bin/sudo /local/repository/bin/config_oai.pl"
     SIM_HWTYPE = "d430"
@@ -165,10 +152,10 @@ enb1 = request.RawPC("enb1")
 if params.FIXED_ENB1:
     enb1.component_id = params.FIXED_ENB1
 enb1.hardware_type = GLOBALS.NUC_HWTYPE
-enb1.disk_image = GLOBALS.OAI_ENB_IMG
+enb1.disk_image = GLOBALS.SRS_ENB_IMG
 enb1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-connectOAI_DS(enb1, 0)
-enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+# connectOAI_DS(enb1, 0)
+# enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
 enb1_s1_if = enb1.addInterface("enb1_s1if")
 
 if params.NUM_ENBs >= 2:
@@ -177,10 +164,10 @@ if params.NUM_ENBs >= 2:
     if params.FIXED_ENB2:
         enb2.component_id = params.FIXED_ENB2
     enb2.hardware_type = GLOBALS.NUC_HWTYPE
-    enb2.disk_image = GLOBALS.OAI_ENB_IMG
+    enb2.disk_image = GLOBALS.SRS_ENB_IMG
     enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-    connectOAI_DS(enb2, 0)
-    enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
+    # connectOAI_DS(enb2, 0)
+    # enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r ENB"))
     enb2_s1_if = enb2.addInterface("enb2_s1if")
 
 # Add an OTS (Nexus 5) UE
@@ -197,7 +184,7 @@ if params.TYPE != "srsUE":
     rue1.adb_target = "adb-tgt"
 else:
     rue1.hardware_type = GLOBALS.NUC_HWTYPE
-    rue1.disk_image = GLOBALS.OAI_ENB_IMG
+    rue1.disk_image = GLOBALS.SRS_ENB_IMG
     rue1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
 
 # Create the RF link between the Nexus 5 UE and eNodeB
@@ -223,8 +210,8 @@ if params.NUM_ENBs >= 2:
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
 epc.disk_image = GLOBALS.OAI_EPC_IMG
-epc.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r EPC"))
-connectOAI_DS(epc, 0)
+# epc.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r EPC"))
+# connectOAI_DS(epc, 0)
 epc_s1_if = epc.addInterface("epc_s1if")
 
 # epclink2.addNode(epc)
