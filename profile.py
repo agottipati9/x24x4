@@ -54,13 +54,12 @@ class GLOBALS(object):
     OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
     SRS_ENB_IMG = "urn:publicid:IDN+emulab.net+image+PowderProfiles:U18LL-SRSLTE:1"
     OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
-    SRS_ENB_IMG = "urn:publicid:IDN+emulab.net+image+PowderProfiles:U18LL-SRSLTE:1"
     OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
     OAI_CONF_SCRIPT = "/usr/bin/sudo /local/repository/bin/config_oai.pl"
     FLEXRAN_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/FlexRAN/install_FlexRAN.sh"
-    OAI_INSTALL_SCRIPT1 = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB1.sh"
-    OAI_INSTALL_SCRIPT2 = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB2.sh"
-    NEXTEPC_INSTALL_SCRIPT = "/usr/bin/sudo /bin/bash && /usr/bin/sudo /local/repository/bin/NextEPC/install_nextEPC.sh"
+    OAI_INSTALL_SCRIPT1 = "/usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB1.sh"
+    OAI_INSTALL_SCRIPT2 = "/usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB2.sh"
+    NEXTEPC_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/NextEPC/install_nextEPC.sh"
     SIM_HWTYPE = "d430"
     NUC_HWTYPE = "nuc5300"
     UE_HWTYPE = "nexus5"
@@ -156,10 +155,10 @@ enb1 = request.RawPC("enb1")
 if params.FIXED_ENB1:
     enb1.component_id = params.FIXED_ENB1
 enb1.hardware_type = GLOBALS.NUC_HWTYPE
-enb1.disk_image = GLOBALS.SRS_ENB_IMG
+enb1.disk_image = GLOBALS.OAI_ENB_IMG
 enb1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
 # connectOAI_DS(enb1, 0)
-enb1.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_INSTALL_SCRIPT1))
+enb1.addService(rspec.Execute(shell="bash", command=GLOBALS.OAI_INSTALL_SCRIPT1))
 enb1_s1_if = enb1.addInterface("enb1_s1if")
 
 # Add another NUC eNB node.
@@ -167,10 +166,10 @@ enb2 = request.RawPC("enb2")
 if params.FIXED_ENB2:
     enb2.component_id = params.FIXED_ENB2
 enb2.hardware_type = GLOBALS.NUC_HWTYPE
-enb2.disk_image = GLOBALS.SRS_ENB_IMG
+enb2.disk_image = GLOBALS.OAI_ENB_IMG
 enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
 # connectOAI_DS(enb2, 0)
-enb2.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_INSTALL_SCRIPT2))
+enb2.addService(rspec.Execute(shell="bash", command=GLOBALS.OAI_INSTALL_SCRIPT2))
 enb2_s1_if = enb2.addInterface("enb2_s1if")
 
 # Add an OTS (Nexus 5) UE
@@ -211,8 +210,8 @@ hacklan.addInterface(enb2_s1_if)
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
 epc.disk_image = GLOBALS.OAI_EPC_IMG
-epc.addService(rspec.Execute(shell="sh", command=GLOBALS.NEXTEPC_INSTALL_SCRIPT))
-epc.addService(rspec.Execute(shell="sh", command=GLOBALS.FLEXRAN_INSTALL_SCRIPT))
+epc.addService(rspec.Execute(shell="bash", command=GLOBALS.NEXTEPC_INSTALL_SCRIPT))
+epc.addService(rspec.Execute(shell="bash", command=GLOBALS.FLEXRAN_INSTALL_SCRIPT))
 # connectOAI_DS(epc, 0)
 epc_s1_if = epc.addInterface("epc_s1if")
 
