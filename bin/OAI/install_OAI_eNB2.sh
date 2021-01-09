@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "installing OAI eNB..."
+cd ~
 git clone https://gitlab.eurecom.fr/oai/openairinterface5g
 cd ~/openairinterface5g
 source oaienv
