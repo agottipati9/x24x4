@@ -84,7 +84,7 @@ also stop. To circumvent this for measurement purposes, on `enb1` run:
 
     sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source -t X
 
-where X is the number of seconds to delay the removal of the source base station.
+where `X` is the number of seconds to delay the removal of the source base station.
 
 ## Setting up the UE for iPerf
 To conduct bandwidth measurements, run the following commands on the `adb` node prior to starting the agent on `enb2`:
