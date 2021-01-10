@@ -15,15 +15,15 @@ the following resources:
 After booting is complete (all nodes have a Startup status of **Finished** aside from the UE), run the following commands
 to finish setting up the experiment:
 
-Log onto the `enb1` node and run: 
+Log into the `enb1` node and run: 
 
     sudo /local/repository/bin/OAI/install_OAI_eNB1.sh
 
-Log onto the `enb2 ` node and run:
+Log into the `enb2 ` node and run:
 
     sudo /local/repository/bin/OAI/install_OAI_eNB2.sh
     
-Log onto the `epc` node and do:
+Log into the `epc` node and do:
     Navigate to this [guide](https://gitlab.flux.utah.edu/powderrenewpublic/mww2019/blob/master/4G-LTE.md) and follow the instructions
     in the **Add the simulated UE subscriber information to the HSS database** section to add the UE subscriber information. Enter in the following:
     
@@ -38,14 +38,14 @@ After adding the UE subscriber information, run the following command to install
         
 **NOTE: Press enter when prompted to add the python repository**
         
-Log onto the `adb` node and run:
+Log into the `adb` node and run:
 
     sudo /local/repository/bin/UE/install_UE_iPerf.sh
 
 # Getting Started
 After installing all the dependencies, you can start SigFlow with following commands:
 
-Log onto the `epc` node and run the following commands in separate windows:
+Log into the `epc` node and run the following commands in separate windows:
 
     sudo /opt/nextepc/install/bin/nextepc-epcd
     sudo /snap/bin/flexran
@@ -55,15 +55,17 @@ Log onto the `epc` node and run the following commands in separate windows:
 
     snap connect flexran:process-control
     
-Log onto the `enb1` node and run the following commands in separate windows: 
+Log into the `enb1` node and run the following commands in separate windows: 
 
     sudo -E ~/openairinterface5g/targets/bin/lte-softmodem.Rel14 -O ~/openairinterface5g/targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.tm1.50PRB.usrpb210.conf
     sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source
     
-**NOTE: Wait for the UE to attach to the base station before preceeding. The UE device will typically connect on its own, but if it doesn't, you can reboot the phone.**
-    
-    
-Log onto the `enb2 ` node and run:
+**NOTE: Wait for the UE to attach to the base station before preceeding. The UE device will typically connect on its own, but if it doesn't, you can reboot the phone from `adb` node with the following:**
+
+    pnadb -a
+    adb reboot
+      
+Log into the `enb2 ` node and run:
 
     sudo /local/repository/bin/MigrationController/start_agent.sh
     
@@ -79,7 +81,14 @@ To access the UE GUI, run:
 
     culebra -s pcXXX.emulab.net:8001 -uG -P 0.25
  
-where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. **Please carry out only one action at a time, as the GUI is very slow.**
+where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. 
+
+**NOTE: If there is an error when opening the GUI, try running:**
+
+    pnadb -a
+
+To access iPerf on UE, do the following:
+* **NOTE: Please carry out only one action at a time, as the GUI is very slow.**
 * If the screen is black, right click on the screen (may have to hold right click) and select wake up device.
 * Click on the menu towards the bottom of the GUI and open the magic iPerf application.
 * In the upper left, ensure that iPerf2 is displayed.
@@ -108,7 +117,7 @@ where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. *
 For trouble shooting the GUI, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
 
 ## Setting up the EPC for iPerf
-On the `epc` node, run the following commands:
+On the `epc` node, run the following command:
 
 * For Uplink:
 
