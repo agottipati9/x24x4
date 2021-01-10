@@ -18,19 +18,19 @@ import time
 
 HOST, PORT = "10.10.1.3", 7777
 timeout = 5
-id = sys.argv[1].split()
+id_arr = sys.argv[1].split()
 
 # Timeout
-if len(id) == 3 and id[1] == '-t':
-    timeout = sys.argv[2] if sys.argv[2].isnumeric() else 5
-id = id[0]
+if len(id_arr) == 3 and id_arr[1] == '-t':
+    timeout = id_arr[2] if id_arr[2].isnumeric() else 5
+id_key = id_arr[0]
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     # Connect to server and send data
     sock.connect((HOST, PORT))
-    sock.sendall(bytes(id + "\n", "utf-8"))
-    print("Sent:     {}".format(id))
+    sock.sendall(bytes(id_key + "\n", "utf-8"))
+    print("Sent:     {}".format(id_key))
 
     while True:
         # Receive data from the server
@@ -60,4 +60,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 time.sleep(15)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((HOST, PORT))
-                sock.sendall(bytes(id + "\n", "utf-8"))
+                sock.sendall(bytes(id_key + "\n", "utf-8"))
