@@ -34,7 +34,7 @@ Log onto the `epc` node and do:
     
 After adding the UE subscriber information, run the following command to install python3.8:
 
-sudo /local/repository/bin/MigrationController/install_python.sh     
+    sudo /local/repository/bin/MigrationController/install_python.sh     
         
 **NOTE: Press enter when prompted to add the python repository**
         
@@ -69,7 +69,7 @@ Log onto the `enb2 ` node and run:
     
 This will start migration process.
  
-**NOTE: Due to stability with OAI, the handover may fail, causing the base stations to crash. If this happens, simply kill the previous commands and restart all the services.**
+**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. If this happens, simply kill the previous commands and restart all the services.**
 
 # Conducting Bandwidth Tests
 ## Setting up the UE for iPerf
@@ -105,7 +105,7 @@ where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. *
    
    **NOTE: For uplink and the reversed downlink (-R), please ensure that the iPerf server is running on the `epc` before starting the client.**
    
-* For trouble shooting, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
+For trouble shooting the GUI, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
 
 ## Setting up the EPC for iPerf
 On the `epc` node, run the following commands:
