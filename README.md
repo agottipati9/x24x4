@@ -24,8 +24,9 @@ Log into the `enb2 ` node and run:
     sudo /local/repository/bin/OAI/install_OAI_eNB2.sh
     
 Log into the `epc` node and do:
-    Navigate to this [guide](https://gitlab.flux.utah.edu/powderrenewpublic/mww2019/blob/master/4G-LTE.md) and follow the instructions
-    in the **Add the simulated UE subscriber information to the HSS database** section to add the UE subscriber information. Enter in the following:
+
+   Navigate to this [guide](https://gitlab.flux.utah.edu/powderrenewpublic/mww2019/blob/master/4G-LTE.md) and follow the instructions
+   in the **Add the simulated UE subscriber information to the HSS database** section to add the UE subscriber information. Enter in the following:
     
     * IMSI: 998981234560300
     * Key: 00112233445566778899aabbccddeeff
@@ -53,7 +54,7 @@ Log into the `epc` node and run the following commands in separate windows:
     
 **NOTE: If there is an error starting FlexRAN, try running:** 
 
-    snap connect flexran:process-control
+    sudo snap connect flexran:process-control
     
 Log into the `enb1` node and run the following commands in separate windows: 
 
@@ -69,19 +70,30 @@ Log into the `enb2 ` node and run:
 
     sudo /local/repository/bin/MigrationController/start_agent.sh
     
-This will start migration process.
+This will start migration process. To restart SigFlow, simply kill the previous commands and restart the services in this section.
  
-**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. If this happens, simply kill the previous commands and restart all the services.**
+**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. Example errors are listed below. If this happens, try restarting SigFlow.**
+
+**Common Errors:** 
+   * LTE_RRCConnectionReestablishmentRequest ue_Identity.physCellId(0) is not equal to current physCellId(1), let's reject the UE.
 
 # Conducting Bandwidth Tests
+## Configuring the Source Agent
+Due to the OAI's X2 protocol implementation, when the source base station is removed, the target base station will
+also stop. To circumvent this for measurement purposes, on `enb1` run:
+
+    sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source -t X
+
+where X is the number of seconds to delay the removal of the source base station.
+
 ## Setting up the UE for iPerf
 To conduct bandwidth measurements, run the following commands on the `adb` node prior to starting the agent on `enb2`:
 
 To access the UE GUI, run: 
 
-    culebra -s pcXXX.emulab.net:8001 -uG -P 0.25
+    culebra -s pc599.emulab.net:8001 -uG -P 0.25
  
-where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. 
+This will open up a GUI to access the COTS UE. 
 
 **NOTE: If there is an error when opening the GUI, try running:**
 

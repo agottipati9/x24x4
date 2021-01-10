@@ -57,7 +57,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             # Spin up target BS
             print('Spinning up new base station.')
             self.request.sendall("start".encode("utf-8"))
-            time.sleep(30)
+            time.sleep(40)
             print('New base station has been instantiated.')
 
             # Get source RNTI

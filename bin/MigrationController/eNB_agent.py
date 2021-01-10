@@ -17,7 +17,13 @@ import subprocess
 import time
 
 HOST, PORT = "10.10.1.3", 7777
-id = " ".join(sys.argv[1:])
+timeout = 5
+id = sys.argv[1].split()
+
+# Timeout
+if len(id) == 3 and id[1] == '-t':
+    timeout = sys.argv[2] if sys.argv[2].isnumeric() else 5
+id = id[0]
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -32,6 +38,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         if len(received) > 0:
             if received == 'kill':
                 print("Received: {}".format(received))
+                time.sleep(timeout)
                 subprocess.call(["sudo", "pkill", "-f", "lte-softmodem.R"])
                 print("Terminated base station instance.")
                 # exit(0)
