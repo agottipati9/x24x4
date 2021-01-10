@@ -99,10 +99,10 @@ This will open up a GUI to access the COTS UE.
 
     pnadb -a
 
-To access iPerf on UE, do the following:
+To access iPerf on the UE, do the following:
 * **NOTE: Please carry out only one action at a time, as the GUI is very slow.**
-* If the screen is black, right click on the screen (may have to hold right click) and select wake up device.
-* Click on the menu towards the bottom of the GUI and open the magic iPerf application.
+* If the screen is black, right click on the screen (may have to hold right click) and select ``Wake up``.
+* Click on the menu (middle icon on the last row) and open the ``Magic iPerf`` application.
 * In the upper left, ensure that iPerf2 is displayed.
 * Select the input box and enter in an iPerf command.
 
@@ -114,9 +114,9 @@ To access iPerf on UE, do the following:
 
         -s -u -p 5000 -i 1
     
-     **NOTE: During the handover, iPerf may fail, when testing downlink traffic.**
+     **NOTE: During the handover, iPerf may fail when testing downlink traffic.**
 
-     If this is the case, try: 
+     If iPerf is failing during downlink, try: 
 
         -c 192.168.0.1 -p 8000 -t 120 -i 1 -u -R 
 
@@ -124,9 +124,11 @@ To access iPerf on UE, do the following:
 
 * In the upper right, flip the button that says ``stopped``. This will start the iPerf process. 
    
-   **NOTE: For uplink and the reversed downlink (-R), please ensure that the iPerf server is running on the `epc` before starting the client.**
-   
-For trouble shooting the GUI, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
+   **NOTE: For uplink and the reversed downlink ``-R``, please ensure that the iPerf server is running on the `epc` before starting the client.**
+
+The GUI may freeze due to the iPerf updates, in this case, simply restart the ``culebra`` client.
+
+For all other trouble shooting the GUI, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
 
 ## Setting up the EPC for iPerf
 On the `epc` node, run the following command:
