@@ -21,62 +21,117 @@ the following resources:
 """;
 
 tourInstructions = """
-After booting is complete (all nodes have a Startup status of finished aside from the UE), run the following commands
+# Finishing the Install
+
+After booting is complete (all nodes have a Startup status of **Finished** aside from the UE), run the following commands
 to finish setting up the experiment:
+
 Log onto the `enb1` node and run: 
+
     sudo /local/repository/bin/OAI/install_OAI_eNB1.sh
+
 Log onto the `enb2 ` node and run:
+
     sudo /local/repository/bin/OAI/install_OAI_eNB2.sh
-Log onto the `epc` node and run:
-    Navigate to https://gitlab.flux.utah.edu/powderrenewpublic/mww2019/blob/master/4G-LTE.md and follow the instructions
-    in the Add the simulated UE subscriber information to the HSS database to add the UE subscriber information. Enter in the following:
-        IMSI: 998981234560300
-        Key: 00112233445566778899aabbccddeeff
-        OP_Type: OP
-        OP: 01020304050607080910111213141516
-    After adding the UE subscriber information, running the following command to install python3.8:
-        sudo /local/repository/bin/MigrationController/install_python.sh
-        NOTE: Press enter when prompted to add the python repository
-Log onto the `adb` node and run:
-    sudo /local/repository/bin/UE/install_UE_iPerf.sh
     
+Log onto the `epc` node and do:
+    Navigate to this [guide](https://gitlab.flux.utah.edu/powderrenewpublic/mww2019/blob/master/4G-LTE.md) and follow the instructions
+    in the **Add the simulated UE subscriber information to the HSS database** section to add the UE subscriber information. Enter in the following:
+    
+    * IMSI: 998981234560300
+    * Key: 00112233445566778899aabbccddeeff
+    * OP_Type: OP
+    * OP: 01020304050607080910111213141516
+    
+After adding the UE subscriber information, run the following command to install python3.8:
+
+sudo /local/repository/bin/MigrationController/install_python.sh     
+        
+**NOTE: Press enter when prompted to add the python repository**
+        
+Log onto the `adb` node and run:
+
+    sudo /local/repository/bin/UE/install_UE_iPerf.sh
+
+# Getting Started
 After installing all the dependencies, you can start SigFlow with following commands:
+
 Log onto the `epc` node and run the following commands in separate windows:
+
     sudo /opt/nextepc/install/bin/nextepc-epcd
     sudo /snap/bin/flexran
-    NOTE: If there is an error starting FlexRAN, try running: snap connect flexran:process-control
     sudo python3.8 /local/repository/bin/MigrationController/mano_controller.py
-Log onto the `enb1` node and run the following commands in separate windows: 
-    sudo -E ~/openairinterface5g/targets/bin/lte-softmodem.Rel14 -O ~/openairinterface5g/targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.tm1.50PRB.usrpb210.conf
-    NOTE: Wait for the UE to attach to the base station before preceeding. The UE device will typically connect on its own, but if it doesn't you can reboot the phone. 
-    sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source
-Log onto the `enb2 ` node and run:
-    sudo /local/repository/bin/MigrationController/start_agent.sh
-The migration process will then begin. 
-NOTE: Due to stability with OAI, the handover may fail, causing the base stations to crash. If this happens, simply kill the previous commands and restart all the services.
+    
+**NOTE: If there is an error starting FlexRAN, try running:** 
 
+    snap connect flexran:process-control
+    
+Log onto the `enb1` node and run the following commands in separate windows: 
+
+    sudo -E ~/openairinterface5g/targets/bin/lte-softmodem.Rel14 -O ~/openairinterface5g/targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.tm1.50PRB.usrpb210.conf
+    sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source
+    
+**NOTE: Wait for the UE to attach to the base station before preceeding. The UE device will typically connect on its own, but if it doesn't, you can reboot the phone.**
+    
+    
+Log onto the `enb2 ` node and run:
+
+    sudo /local/repository/bin/MigrationController/start_agent.sh
+    
+This will start migration process.
+ 
+**NOTE: Due to stability with OAI, the handover may fail, causing the base stations to crash. If this happens, simply kill the previous commands and restart all the services.**
+
+# Conducting Bandwidth Tests
+## Setting up the UE for iPerf
 To conduct bandwidth measurements, run the following commands on the `adb` node prior to starting the agent on `enb2`:
-    Run culebra -s pcXXX.emulab.net:8001 -uG -P 0.25, where pcXXX is the adb machine. This will open up a GUI to access the COTS UE.
-    If the screen is black, right click on the screen (may have to hold right click) and select wake up device.
-    Please only carry out one action at a time, as the GUI is very slow.
-    Click on the menu towards the bottom of the GUI and open the magic iPerf application.
-    In the upper left, ensure that iPerf2 is displayed.
-    Select the input box and type the following:
-    For Uplink:
-		-c 192.168.0.1 -p 8000 -t 120 -i 1 -u
-    For Downlink:
+
+To access the UE GUI, run: 
+
+    culebra -s pcXXX.emulab.net:8001 -uG -P 0.25
+ 
+where pcXXX is the adb machine. This will open up a GUI to access the COTS UE. **Please carry out only one action at a time, as the GUI is very slow.**
+* If the screen is black, right click on the screen (may have to hold right click) and select wake up device.
+* Click on the menu towards the bottom of the GUI and open the magic iPerf application.
+* In the upper left, ensure that iPerf2 is displayed.
+* Select the input box and enter in an iPerf command.
+
+* For Uplink:
+
+        -c 192.168.0.1 -p 8000 -t 120 -i 1 -u
+    
+* For Downlink:
+
         -s -u -p 5000 -i 1
-        NOTE: During the handover, iPerf may fail on the downlink
-        If this is the case, try: -c 192.168.0.1 -p 8000 -t 120 -i 1 -u -R 
-        This causes the UE to act as a client, but the server will send packets downstream.
-    In the upper right, flip the button that says ``stopped``. This will start the iPerf process. NOTE: For uplink and the reversed downlink, please ensure that the iPerf server is running on the `epc` before starting the client.
-    For trouble shooting, please refer to https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra
-    On the `epc` node, run the following commands:
-    For Uplink:
+    
+     **NOTE: During the handover, iPerf may fail, when testing downlink traffic.**
+
+     If this is the case, try: 
+
+        -c 192.168.0.1 -p 8000 -t 120 -i 1 -u -R 
+
+    * This causes the UE to act as a client, but the server will send packets downstream.
+
+* In the upper right, flip the button that says ``stopped``. This will start the iPerf process. 
+   
+   **NOTE: For uplink and the reversed downlink (-R), please ensure that the iPerf server is running on the `epc` before starting the client.**
+   
+* For trouble shooting, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
+
+## Setting up the EPC for iPerf
+On the `epc` node, run the following commands:
+
+* For Uplink:
+
         iperf -s -u -p 8000 -i 1
-    For Downlink:
+        
+* For Downlink:
+
         iperf -c 192.168.0.2 -p 5000 -t 120 -i 1 -u
-        NOTE: If you are using the -R flag on the UE, run: iperf -s -u -p 8000 -i 1
+    If you are using the **-R** flag on the UE, run:
+    
+        iperf -s -u -p 8000 -i 1
+
 """;
 
 #
