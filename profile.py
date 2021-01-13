@@ -100,7 +100,7 @@ where `X` is the number of seconds to delay the removal of the source base stati
 ## Setting up the EPC for iPerf
 On the `epc` node, run the following command:
 
-        iperf -s -u -p 8000 -i 1
+    iperf -s -u -p 8000 -i 1
         
 
 ## Setting up the UE for iPerf
@@ -123,7 +123,7 @@ To access iPerf on the UE, do the following:
 * In the upper left, ensure that iPerf2 is displayed.
 * Select the input box and enter in an iPerf command.
 
-        -c 192.168.0.1 -p 8000 -t 80 -i 1 -u -d
+      -c 192.168.0.1 -p 8000 -t 80 -i 1 -u -d
 
    * The ```-t``` flag specifies the duration of the iPerf test.
    * The ```-d``` flag allows uplink and downlink testing to be conducted in parallel.
