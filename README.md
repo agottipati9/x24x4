@@ -1,13 +1,13 @@
 # About This Profile
 
-Use this profile to instantiate an experiment of SigFlow using Open Air Interface,
+Use this profile to instantiate an experiment of BoTM using Open Air Interface,
 FlexRAN, and NextEPC to realize an end-to-end SDR-based mobile network. This profile includes
 the following resources:
 
     * Off-the-shelf Nexus 5 UE running Android 4.4.4 KitKat ('rue1')
     * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb1')
     * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb2')
-    * NextEPC EPC (HSS, MME, SPGW), FlexRAN Ran Controller, and SigFlow running on Ubuntu 18 ('epc')
+    * NextEPC EPC (HSS, MME, SPGW), FlexRAN Ran Controller, and BoTM running on Ubuntu 18 ('epc')
     * A node providing out-of-band ADB access to the UE ('adb-tgt')
 
 # Finishing the Install
@@ -44,7 +44,7 @@ Log into the `adb` node and run:
     sudo /local/repository/bin/UE/install_UE_iPerf.sh
 
 # Getting Started
-After installing all the dependencies, you can start SigFlow with following commands:
+After installing all the dependencies, you can start BoTM with following commands:
 
 Log into the `epc` node and run the following commands in separate windows:
 
@@ -70,9 +70,9 @@ Log into the `enb2 ` node and run:
 
     sudo /local/repository/bin/MigrationController/start_agent.sh
     
-This will start migration process. To restart SigFlow, simply kill the previous commands and restart the services in this section.
+This will start migration process. To restart BoTM, simply kill the previous commands and restart the services in this section.
  
-**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. Example errors are listed below. If this happens, try restarting SigFlow.**
+**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. Example errors are listed below. If this happens, try restarting BoTM.**
 
 **Common Errors:** 
    * LTE_RRCConnectionReestablishmentRequest ue_Identity.physCellId(0) is not equal to current physCellId(1), let's reject the UE.
@@ -85,6 +85,12 @@ also stop. To circumvent this for measurement purposes, on `enb1` run:
     sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source -t X
 
 where `X` is the number of seconds to delay the removal of the source base station.
+
+## Setting up the EPC for iPerf
+On the `epc` node, run the following command:
+
+        iperf -s -u -p 8000 -i 1
+        
 
 ## Setting up the UE for iPerf
 To conduct bandwidth measurements, run the following commands on the `adb` node prior to starting the agent on `enb2`:
@@ -106,40 +112,15 @@ To access iPerf on the UE, do the following:
 * In the upper left, ensure that iPerf2 is displayed.
 * Select the input box and enter in an iPerf command.
 
-* For Uplink:
+        -c 192.168.0.1 -p 8000 -t 80 -i 1 -u -d
 
-        -c 192.168.0.1 -p 8000 -t 120 -i 1 -u
-    
-* For Downlink:
-
-        -s -u -p 5000 -i 1
-    
-     **NOTE: During the handover, iPerf may fail when testing downlink traffic.**
-
-     If iPerf is failing during downlink, try: 
-
-        -c 192.168.0.1 -p 8000 -t 120 -i 1 -u -R 
-
-    * This causes the UE to act as a client, but the server will send packets downstream.
+   * The ```-t``` flag specifies the duration of the iPerf test.
+   * The ```-d``` flag allows uplink and downlink testing to be conducted in parallel.
 
 * In the upper right, flip the button that says ``stopped``. This will start the iPerf process. 
    
-   **NOTE: For uplink and the reversed downlink ``-R``, please ensure that the iPerf server is running on the `epc` before starting the client.**
+   **NOTE: Please ensure that the iPerf server is running on the `epc` before starting the client.**
 
 The GUI may freeze due to the iPerf updates, in this case, simply restart the ``culebra`` client.
 
 For all other trouble shooting the GUI, please refer to this [guide](https://wiki.phantomnet.org/wiki/phantomnet/tutorial-interacting-and-scripting-on-the-ue-with-culebra).
-
-## Setting up the EPC for iPerf
-On the `epc` node, run the following command:
-
-* For Uplink:
-
-        iperf -s -u -p 8000 -i 1
-        
-* For Downlink:
-
-        iperf -c 192.168.0.2 -p 5000 -t 120 -i 1 -u
-    If you are using the **-R** flag on the UE, run:
-    
-        iperf -s -u -p 8000 -i 1
