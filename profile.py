@@ -10,13 +10,13 @@ import geni.rspec.igext as IG
 import geni.urn as URN
 
 tourDescription = """
-Use this profile to instantiate an experiment of SigFlow using Open Air Interface,
+Use this profile to instantiate an experiment of BoTM using Open Air Interface,
 FlexRAN, and NextEPC to realize an end-to-end SDR-based mobile network. This profile includes
 the following resources:
   * Off-the-shelf Nexus 5 UE running Android 4.4.4 KitKat ('rue1')
   * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb1')
   * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb2')
-  * NextEPC EPC (HSS, MME, SPGW), FlexRAN Ran Controller, and SigFlow running on Ubuntu 18 ('epc')
+  * NextEPC EPC (HSS, MME, SPGW), FlexRAN Ran Controller, and BoTM running on Ubuntu 18 ('epc')
   * A node providing out-of-band ADB access to the UE ('adb-tgt')
 """;
 
