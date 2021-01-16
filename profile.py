@@ -63,7 +63,7 @@ Log into the `enb1` node and run the following commands in separate windows:
     pnadb -a
     adb reboot
       
-Log into the `enb2 ` node and run:
+Log into the `enb2` node and run:
 
     sudo /local/repository/bin/MigrationController/start_agent.sh
     
@@ -121,40 +121,16 @@ import geni.rspec.emulab.pnext as PN
 # Globals
 #
 class GLOBALS(object):
-    OAI_DS = "urn:publicid:IDN+emulab.net:phantomnet+ltdataset+oai-develop"
-    OAI_SIM_DS = "urn:publicid:IDN+emulab.net:phantomnet+dataset+PhantomNet:oai"
     UE_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:ANDROID444-STD")
     ADB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-PNTOOLS")
-    OAI_EPC_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU16-64-OAIEPC")
     SRS_ENB_IMG = "urn:publicid:IDN+emulab.net+image+PowderProfiles:U18LL-SRSLTE:1"
-    OAI_ENB_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:OAI-Real-Hardware.enb1")
-    OAI_SIM_IMG = URN.Image(PN.PNDEFS.PNET_AM, "PhantomNet:UBUNTU14-64-OAI")
-    OAI_CONF_SCRIPT = "/usr/bin/sudo /local/repository/bin/config_oai.pl"
-    FLEXRAN_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/FlexRAN/install_FlexRAN.sh"
-    OAI_INSTALL_SCRIPT1 = "/usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB1.sh"
-    OAI_INSTALL_SCRIPT2 = "/usr/bin/sudo /local/repository/bin/OAI/install_OAI_eNB2.sh"
+    EPC_IMG = "urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU18-64-STD"
     NEXTEPC_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/NextEPC/install_nextEPC.sh"
+    SRSLTE_INSTALL_SCRIPT = "/usr/bin/sudo /local/repository/bin/srsLTE/install_srsLTE.sh"
     SIM_HWTYPE = "d430"
     NUC_HWTYPE = "nuc5300"
     UE_HWTYPE = "nexus5"
 
-
-def connectOAI_DS(node, sim):
-    # Create remote read-write clone dataset object bound to OAI dataset
-    bs = request.RemoteBlockstore("ds-%s" % node.name, "/opt/oai")
-    if sim == 1:
-        bs.dataset = GLOBALS.OAI_SIM_DS
-    else:
-        bs.dataset = GLOBALS.OAI_DS
-        bs.rwclone = True
-
-    # Create link from node to OAI dataset rw clone
-    node_if = node.addInterface("dsif_%s" % node.name)
-    bslink = request.Link("dslink_%s" % node.name)
-    bslink.addInterface(node_if)
-    bslink.addInterface(bs.interface)
-    bslink.vlan_tagging = True
-    bslink.best_effort = True
 
 #
 # This geni-lib script is designed to run in the PhantomNet Portal.
@@ -183,16 +159,12 @@ pc.defineParameter("FIXED_ENB2", "Bind to a specific eNodeB",
                                    "matrix.")
 
 pc.defineParameter("TYPE", "Experiment type",
-                   portal.ParameterType.STRING,"ota",[("sim","Simulated UE"),("atten","Real UE with attenuator"),("srsUE","srsUE with attenuator"),("ota","Over the air")],
+                   portal.ParameterType.STRING,"ota",[("atten","Real UE with attenuator"),("srsUE","srsUE with attenuator"),("ota","Over the air")],
                    longDescription="*Simulated UE*: OAI simulated UE connects to an OAI eNodeB and EPC. *Real "
                                    "UE/srsUE with attenuator*: Real RF devices will be connected via transmission "
                                    "lines with variable attenuator control. *Over the air*: Real RF devices with real "
                                    "antennas and transmissions propagated through free space will be selected.")
 
-# pc.defineParameter("NUM_UEs", "Number of UEs 1",
-#                    portal.ParameterType.INTEGER, 1)
-# pc.defineParameter("NUM_ENBs", "Number of eNodeBs 2",
-#                    portal.ParameterType.INTEGER, 1)
 
 params = pc.bindParameters()
 
@@ -209,30 +181,20 @@ pc.verifyParameters()
 request = pc.makeRequestRSpec()
 hacklan = request.Link("s1-lan")
 
-# Checking for oaisim
-
-if params.TYPE == "sim":
-    sim_enb = request.RawPC("sim-enb")
-    sim_enb.disk_image = GLOBALS.OAI_SIM_IMG
-    sim_enb.hardware_type = GLOBALS.SIM_HWTYPE
-    sim_enb.addService(rspec.Execute(shell="sh", command=GLOBALS.OAI_CONF_SCRIPT + " -r SIM_ENB"))
-    connectOAI_DS(sim_enb, 1)
-    epclink.addNode(sim_enb)
-else:
-    if params.TYPE != "srsUE":
-        # Add a node to act as the ADB target host
-        adb_t = request.RawPC("adb-tgt")
-        adb_t.disk_image = GLOBALS.ADB_IMG
+# Checking for COTS UE
+if params.TYPE != "srsUE":
+    # Add a node to act as the ADB target host
+    adb_t = request.RawPC("adb-tgt")
+    adb_t.disk_image = GLOBALS.ADB_IMG
 
 # Add a NUC eNB node.
 enb1 = request.RawPC("enb1")
 if params.FIXED_ENB1:
     enb1.component_id = params.FIXED_ENB1
 enb1.hardware_type = GLOBALS.NUC_HWTYPE
-enb1.disk_image = GLOBALS.OAI_ENB_IMG
+enb1.disk_image = GLOBALS.SRS_ENB_IMG
 enb1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-# connectOAI_DS(enb1, 0)
-# enb1.addService(rspec.Execute(shell="bash", command=GLOBALS.OAI_INSTALL_SCRIPT1))
+enb1.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
 enb1_s1_if = enb1.addInterface("enb1_s1if")
 
 # Add another NUC eNB node.
@@ -240,10 +202,9 @@ enb2 = request.RawPC("enb2")
 if params.FIXED_ENB2:
     enb2.component_id = params.FIXED_ENB2
 enb2.hardware_type = GLOBALS.NUC_HWTYPE
-enb2.disk_image = GLOBALS.OAI_ENB_IMG
+enb2.disk_image = GLOBALS.SRS_ENB_IMG
 enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-# connectOAI_DS(enb2, 0)
-# enb2.addService(rspec.Execute(shell="bash", command=GLOBALS.OAI_INSTALL_SCRIPT2))
+enb2.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
 enb2_s1_if = enb2.addInterface("enb2_s1if")
 
 # Add an OTS (Nexus 5) UE
@@ -283,10 +244,8 @@ hacklan.addInterface(enb2_s1_if)
 
 # Add OAI EPC (HSS, MME, SPGW) node.
 epc = request.RawPC("epc")
-epc.disk_image = GLOBALS.OAI_EPC_IMG
+epc.disk_image = GLOBALS.EPC_IMG
 epc.addService(rspec.Execute(shell="bash", command=GLOBALS.NEXTEPC_INSTALL_SCRIPT))
-epc.addService(rspec.Execute(shell="bash", command=GLOBALS.FLEXRAN_INSTALL_SCRIPT))
-# connectOAI_DS(epc, 0)
 epc_s1_if = epc.addInterface("epc_s1if")
 
 # epclink2.addNode(epc)
