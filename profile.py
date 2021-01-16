@@ -189,7 +189,7 @@ if params.FIXED_ENB1:
 enb1.hardware_type = GLOBALS.NUC_HWTYPE
 enb1.disk_image = GLOBALS.SRS_ENB_IMG
 enb1.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-enb1.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
+# enb1.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
 enb1_s1_if = enb1.addInterface("enb1_s1if")
 
 # Add another NUC eNB node.
@@ -199,7 +199,7 @@ if params.FIXED_ENB2:
 enb2.hardware_type = GLOBALS.NUC_HWTYPE
 enb2.disk_image = GLOBALS.SRS_ENB_IMG
 enb2.Desire("rf-radiated" if params.TYPE == "ota" else "rf-controlled", 1)
-enb2.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
+# enb2.addService(rspec.Execute(shell="bash", command=GLOBALS.SRSLTE_INSTALL_SCRIPT))
 enb2_s1_if = enb2.addInterface("enb2_s1if")
 
 # Add an OTS (Nexus 5) UE
