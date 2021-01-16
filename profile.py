@@ -10,13 +10,12 @@ import geni.rspec.igext as IG
 import geni.urn as URN
 
 tourDescription = """
-Use this profile to instantiate an experiment of BoTM using Open Air Interface,
-FlexRAN, and NextEPC to realize an end-to-end SDR-based mobile network. This profile includes
+Use this profile to instantiate an experiment of BoTM using srsLTE and NextEPC to realize an end-to-end SDR-based mobile network. This profile includes
 the following resources:
   * Off-the-shelf Nexus 5 UE running Android 4.4.4 KitKat ('rue1')
-  * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb1')
-  * SDR eNodeB (Intel NUC + USRP B210) running OAI on Ubuntu 16 ('enb2')
-  * NextEPC EPC (HSS, MME, SPGW), FlexRAN Ran Controller, and BoTM running on Ubuntu 18 ('epc')
+  * SDR eNodeB (Intel NUC + USRP B210) running srsLTE on Ubuntu 18 ('enb1')
+  * SDR eNodeB (Intel NUC + USRP B210) running srsLTE on Ubuntu 18 ('enb2')
+  * NextEPC EPC (HSS, MME, SPGW) and BoTM running on Ubuntu 18 ('epc')
   * A node providing out-of-band ADB access to the UE ('adb-tgt')
 """;
 
@@ -25,14 +24,6 @@ tourInstructions = """
 
 After booting is complete (all nodes have a Startup status of **Finished** aside from the UE), run the following commands
 to finish setting up the experiment:
-
-Log into the `enb1` node and run: 
-
-    sudo /local/repository/bin/OAI/install_OAI_eNB1.sh
-
-Log into the `enb2 ` node and run:
-
-    sudo /local/repository/bin/OAI/install_OAI_eNB2.sh
     
 Log into the `epc` node and do:
 
@@ -60,16 +51,11 @@ After installing all the dependencies, you can start BoTM with following command
 Log into the `epc` node and run the following commands in separate windows:
 
     sudo /opt/nextepc/install/bin/nextepc-epcd
-    sudo /snap/bin/flexran
     sudo python3.8 /local/repository/bin/MigrationController/mano_controller.py
-    
-**NOTE: If there is an error starting FlexRAN, try running:** 
-
-    sudo snap connect flexran:process-control
     
 Log into the `enb1` node and run the following commands in separate windows: 
 
-    sudo -E ~/openairinterface5g/targets/bin/lte-softmodem.Rel14 -O ~/openairinterface5g/targets/PROJECTS/GENERIC-LTE-EPC/CONF/enb.band7.tm1.50PRB.usrpb210.conf
+    n/a
     sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source
     
 **NOTE: Wait for the UE to attach to the base station before preceeding. The UE device will typically connect on its own, but if it doesn't, you can reboot the phone from `adb` node with the following:**
@@ -82,20 +68,8 @@ Log into the `enb2 ` node and run:
     sudo /local/repository/bin/MigrationController/start_agent.sh
     
 This will start migration process. To restart BoTM, simply kill the previous commands and restart the services in this section.
- 
-**NOTE: Due to stability issues with OAI, the handover may fail, causing the base stations to crash. Example errors are listed below. If this happens, try restarting BoTM.**
-
-**Common Errors:** 
-   * LTE_RRCConnectionReestablishmentRequest ue_Identity.physCellId(0) is not equal to current physCellId(1), let's reject the UE.
 
 # Conducting Bandwidth Tests
-## Configuring the Source Agent
-Due to the OAI's X2 protocol implementation, when the source base station is removed, the target base station will
-also stop. To circumvent this for measurement purposes, on `enb1` run:
-
-    sudo python3 /local/repository/bin/MigrationController/eNB_agent.py source -t X
-
-where `X` is the number of seconds to delay the removal of the source base station.
 
 ## Setting up the EPC for iPerf
 On the `epc` node, run the following command:
