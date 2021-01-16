@@ -167,11 +167,6 @@ pc.defineParameter("TYPE", "Experiment type",
 
 
 params = pc.bindParameters()
-
-#
-# Give the library a chance to return nice JSON-formatted exception(s) and/or
-# warnings; this might sys.exit().
-#
 pc.verifyParameters()
 
 #
