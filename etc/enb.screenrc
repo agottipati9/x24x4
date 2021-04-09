@@ -1,3 +1,0 @@
-log on
-logfile /var/log/oai/enb.log
-logfile flush 1
