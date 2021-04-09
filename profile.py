@@ -25,7 +25,7 @@ tourInstructions = """
 After booting is complete (all nodes have a Startup status of **Finished** aside from the UE), run the following commands
 to finish setting up the experiment:
 
-    sudo /local/repository/bin/UE/install_srsLTE_X.sh
+    sudo /local/repository/bin/srsLTE/install_srsLTE_X.sh
     
 where X is either 1 or 2.
     
