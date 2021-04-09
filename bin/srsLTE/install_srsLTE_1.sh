@@ -15,5 +15,5 @@ make test
 sudo make install
 echo "Finished install. Copying cofigs to ~/.config..."
 sudo srslte_install_configs.sh user
-sudo cp /local/repository/etc/enb1.conf ~/.config/srslte/enb.conf
+sudo cp /local/repository/etc/srsLTE/enb1.conf ~/.config/srslte/enb.conf
 sudo cp /local/repository/etc/srsLTE/rr1.conf ~/.config/srslte/rr.conf
